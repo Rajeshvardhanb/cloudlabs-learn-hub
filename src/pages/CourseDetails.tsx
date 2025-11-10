@@ -46,7 +46,7 @@ const CourseDetails = () => {
         </div>
 
         {/* Tabs Section */}
-        <Tabs defaultValue="modules" className="w-full">
+        <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="modules">Modules</TabsTrigger>
@@ -78,7 +78,11 @@ const CourseDetails = () => {
                         {module.lessons.length > 0 ? module.lessons.map((lesson, lessonIndex) => (
                            <li key={lessonIndex} className="flex items-center text-gray-600 dark:text-gray-300">
                              <PlayCircle className="h-5 w-5 text-gray-400 mr-3" />
-                             <span>{lesson}</span>
+                             {lesson.videoUrl ? (
+                               <a href={lesson.videoUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{lesson.title}</a>
+                             ) : (
+                               <span>{lesson.title}</span>
+                             )}
                            </li>
                         )) : <p className="text-gray-500">Lessons for this module will be available soon.</p>}
                       </ul>

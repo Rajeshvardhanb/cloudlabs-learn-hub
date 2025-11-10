@@ -24,55 +24,55 @@ export const courseData = [
       {
         title: "Module 1: Introduction to AWS",
         lessons: [
-          "Cloud Computing and AWS",
-          "AWS Global Infrastructure",
-          "IAM: Identity and Access Management",
-          "Lab: Configuring IAM users and groups"
+          { title: "Cloud Computing and AWS", videoUrl: "https://youtu.be/MXqjhE48jV8", duration: "10:45" },
+          { title: "AWS Global Infrastructure", duration: "12:30" },
+          { title: "IAM: Identity and Access Management", duration: "15:20" },
+          { title: "Lab: Configuring IAM users and groups", duration: "20:00" }
         ]
       },
       {
         title: "Module 2: Core Compute Services",
         lessons: [
-          "Amazon EC2: Virtual Servers in the Cloud",
-          "Elastic Load Balancing and Auto Scaling",
-          "AWS Lambda: Serverless Computing",
-          "Lab: Launching and managing EC2 instances"
+          { title: "Amazon EC2: Virtual Servers in the Cloud", duration: "18:50" },
+          { title: "Elastic Load Balancing and Auto Scaling", duration: "22:10" },
+          { title: "AWS Lambda: Serverless Computing", duration: "15:00" },
+          { title: "Lab: Launching and managing EC2 instances", duration: "25:00" }
         ]
       },
       {
         title: "Module 3: Storage Services",
         lessons: [
-          "Amazon S3: Object Storage",
-          "Amazon EBS: Block Storage for EC2",
-          "Amazon EFS and FSx: File Storage",
-          "Lab: Creating and managing S3 buckets"
+          { title: "Amazon S3: Object Storage", duration: "17:45" },
+          { title: "Amazon EBS: Block Storage for EC2", duration: "14:30" },
+          { title: "Amazon EFS and FSx: File Storage", duration: "16:00" },
+          { title: "Lab: Creating and managing S3 buckets", duration: "28:00" }
         ]
       },
       {
         title: "Module 4: Networking and Content Delivery",
         lessons: [
-          "Amazon VPC: Virtual Private Cloud",
-          "Amazon Route 53: DNS Service",
-          "Amazon CloudFront: Content Delivery Network",
-          "Lab: Building a custom VPC"
+          { title: "Amazon VPC: Virtual Private Cloud", duration: "20:15" },
+          { title: "Amazon Route 53: DNS Service", duration: "18:00" },
+          { title: "Amazon CloudFront: Content Delivery Network", duration: "16:30" },
+          { title: "Lab: Building a custom VPC", duration: "30:00" }
         ]
       },
       {
         title: "Module 5: Database Services",
         lessons: [
-          "Amazon RDS: Relational Database Service",
-          "Amazon DynamoDB: NoSQL Database",
-          "Amazon Aurora: High Performance Relational Database",
-          "Lab: Launching an RDS instance"
+          { title: "Amazon RDS: Relational Database Service", duration: "19:00" },
+          { title: "Amazon DynamoDB: NoSQL Database", duration: "21:20" },
+          { title: "Amazon Aurora: High Performance Relational Database", duration: "17:00" },
+          { title: "Lab: Launching an RDS instance", duration: "26:00" }
         ]
       },
       {
         title: "Module 6: Security and Monitoring",
         lessons: [
-          "AWS Security Best Practices",
-          "AWS CloudTrail and CloudWatch",
-          "AWS Trusted Advisor",
-          "Lab: Setting up CloudWatch alarms"
+          { title: "AWS Security Best Practices", duration: "22:30" },
+          { title: "AWS CloudTrail and CloudWatch", duration: "18:45" },
+          { title: "AWS Trusted Advisor", duration: "12:00" },
+          { title: "Lab: Setting up CloudWatch alarms", duration: "24:00" }
         ]
       }
     ],
@@ -80,7 +80,9 @@ export const courseData = [
         { title: "AWS Solutions Architect Official Exam Guide", link: "#" },
         { title: "AWS Well-Architected Framework", link: "#" },
         { title: "Practice Exam Questions", link: "#" }
-    ]
+    ],
+    status: "In Progress",
+    progress: 65
   },
   {
     id: 2,
@@ -107,26 +109,28 @@ export const courseData = [
       {
         title: "Module 1: Introduction to DevSecOps",
         lessons: [
-          "Understanding DevSecOps Culture",
-          "Security in the Software Development Lifecycle",
-          "DevSecOps Tools Overview",
-          "Setting Up Your Lab Environment"
+          { title: "Understanding DevSecOps Culture", duration: "11:30" },
+          { title: "Security in the Software Development Lifecycle", duration: "14:00" },
+          { title: "DevSecOps Tools Overview", duration: "18:20" },
+          { title: "Setting Up Your Lab Environment", duration: "22:00" }
         ]
       },
       {
         title: "Module 2: Secure CI/CD Pipelines",
         lessons: [
-          "Integrating SAST with SonarQube",
-          "DAST with OWASP ZAP",
-          "Dependency Scanning with Snyk",
-          "Secret Management with HashiCorp Vault"
+          { title: "Integrating SAST with SonarQube", duration: "19:50" },
+          { title: "DAST with OWASP ZAP", duration: "23:15" },
+          { title: "Dependency Scanning with Snyk", duration: "16:40" },
+          { title: "Secret Management with HashiCorp Vault", duration: "21:00" }
         ]
       }
     ],
     resources: [
         { title: "OWASP Top 10", link: "#" },
         { title: "SonarQube Documentation", link: "#" }
-    ]
+    ],
+    status: "In Progress",
+    progress: 42
   },
   {
     id: 3,
@@ -152,24 +156,25 @@ export const courseData = [
       {
         title: "Module 1: Getting Started with Terraform",
         lessons: [
-          "Introduction to Infrastructure as Code",
-          "Setting up Terraform",
-          "Writing your first Terraform configuration"
+          { title: "Introduction to Infrastructure as Code", duration: "10:00" },
+          { title: "Setting up Terraform", duration: "13:45" },
+          { title: "Writing your first Terraform configuration", duration: "17:30" }
         ]
       },
        {
         title: "Module 2: Advanced Terraform",
         lessons: [
-          "Managing State",
-          "Creating and using modules",
-          "Working with multiple providers"
+          { title: "Managing State", duration: "19:20" },
+          { title: "Creating and using modules", duration: "22:00" },
+          { title: "Working with multiple providers", duration: "18:10" }
         ]
       }
     ],
     resources: [
         { title: "Terraform Documentation", link: "#" },
         { title: "Terraform Registry", link: "#" }
-    ]
+    ],
+    status: "Not Started"
   },
     {
     id: 4,
@@ -195,23 +200,24 @@ export const courseData = [
       {
         title: "Module 1: Jenkins Fundamentals",
         lessons: [
-          "Introduction to CI/CD",
-          "Installing Jenkins",
-          "Your first Jenkins job"
+          { title: "Introduction to CI/CD", duration: "9:30" },
+          { title: "Installing Jenkins", duration: "14:15" },
+          { title: "Your first Jenkins job", duration: "16:00" }
         ]
       },
       {
         title: "Module 2: Building Pipelines",
         lessons: [
-          "Declarative vs. Scripted Pipeline",
-          "Integrating Git",
-          "Building and testing applications"
+          { title: "Declarative vs. Scripted Pipeline", duration: "18:40" },
+          { title: "Integrating Git", duration: "20:00" },
+          { title: "Building and testing applications", duration: "24:30" }
         ]
       }
     ],
     resources: [
         { title: "Jenkins Documentation", link: "#" }
-    ]
+    ],
+    status: "Not Started"
   },
   {
     id: 5,
@@ -238,23 +244,24 @@ export const courseData = [
       {
         title: "Module 1: Kubernetes Security Fundamentals",
         lessons: [
-          "Pod Security Policies",
-          "Network Policies",
-          "Role-Based Access Control (RBAC)"
+          { title: "Pod Security Policies", duration: "17:50" },
+          { title: "Network Policies", duration: "20:30" },
+          { title: "Role-Based Access Control (RBAC)", duration: "18:00" }
         ]
       },
        {
         title: "Module 2: Hardening and Monitoring",
         lessons: [
-          "Securing the Kubernetes API Server",
-          "Image vulnerability scanning",
-          "Auditing and logging"
+          { title: "Securing the Kubernetes API Server", duration: "21:40" },
+          { title: "Image vulnerability scanning", duration: "19:00" },
+          { title: "Auditing and logging", duration: "15:30" }
         ]
       }
     ],
     resources: [
         { title: "Kubernetes Security Documentation", link: "#" }
-    ]
+    ],
+    status: "Not Started"
   },
   {
     id: 6,
@@ -282,52 +289,54 @@ export const courseData = [
       {
         title: "Phase 1: Cloud Foundations (AWS)",
         lessons: [
-          "AWS Core Services & Architecture",
-          "VPC Networking and Security Groups",
-          "IAM and Security Best Practices",
-          "Project: Deploy a 3-Tier Web Application"
+          { title: "Introduction to Cloud", videoUrl: "https://youtu.be/MXqjhE48jV8", duration: "12:30" },
+          { title: "AWS Core Services & Architecture", videoUrl: "https://www.youtube.com/watch?v=OkW_2n2fE2I", duration: "12:30" },
+          { title: "VPC Networking and Security Groups", duration: "12:30" },
+          { title: "IAM and Security Best Practices", duration: "12:30" },
+          { title: "Project: Deploy a 3-Tier Web Application", duration: "12:30" }
         ]
       },
        {
         title: "Phase 2: Infrastructure as Code",
         lessons: [
-          "Terraform Basics & Language Syntax",
-          "Provisioning AWS Resources with Terraform",
-          "State Management and Modules",
-          "Project: Automate Your 3-Tier App Deployment"
+          { title: "Terraform Basics & Language Syntax", duration: "12:30" },
+          { title: "Provisioning AWS Resources with Terraform", duration: "12:30" },
+          { title: "State Management and Modules", duration: "12:30" },
+          { title: "Project: Automate Your 3-Tier App Deployment", duration: "12:30" }
         ]
       },
       {
         title: "Phase 3: CI/CD & Automation",
         lessons: [
-          "Git, Jenkins, and Ansible Fundamentals",
-          "Building a Jenkins CI/CD Pipeline",
-          "Automating Deployments with Ansible",
-          "Project: Create a Full CI/CD Pipeline for a Web App"
+          { title: "Git, Jenkins, and Ansible Fundamentals", duration: "12:30" },
+          { title: "Building a Jenkins CI/CD Pipeline", duration: "12:30" },
+          { title: "Automating Deployments with Ansible", duration: "12:30" },
+          { title: "Project: Create a Full CI/CD Pipeline for a Web App", duration: "12:30" }
         ]
       },
        {
         title: "Phase 4: Containers & Orchestration",
         lessons: [
-          "Docker Fundamentals & Image Creation",
-          "Introduction to Kubernetes",
-          "Deploying and Managing Applications on EKS",
-          "Project: Containerize and Deploy Your App on Kubernetes"
+          { title: "Docker Fundamentals & Image Creation", duration: "12:30" },
+          { title: "Introduction to Kubernetes", duration: "12:30" },
+          { title: "Deploying and Managing Applications on EKS", duration: "12:30" },
+          { title: "Project: Containerize and Deploy Your App on Kubernetes", duration: "12:30" }
         ]
       },
        {
         title: "Phase 5: DevSecOps",
         lessons: [
-          "Integrating SAST & DAST in Pipelines",
-          "Container Security Scanning",
-          "Secrets Management with Vault",
-          "Project: Secure Your CI/CD Pipeline"
+          { title: "Integrating SAST & DAST in Pipelines", duration: "12:30" },
+          { title: "Container Security Scanning", duration: "12:30" },
+          { title: "Secrets Management with Vault", duration: "12:30" },
+          { title: "Project: Secure Your CI/CD Pipeline", duration: "12:30" }
         ]
       }
     ],
     resources: [
         { title: "Internship Project Workbook", link: "#" },
         { title: "Private Slack Community Access", link: "#" }
-    ]
+    ],
+    status: "Not Started"
   }
 ];
