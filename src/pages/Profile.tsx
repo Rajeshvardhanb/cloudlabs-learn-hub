@@ -1,123 +1,147 @@
 import AnimatedPage from "@/components/AnimatedPage";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { courseData } from "@/data/courseData";
-import { Link } from "react-router-dom";
-import { BookOpenCheck, Clock, Award } from "lucide-react";
-
-// Mock data for user's profile and progress
-const user = {
-  name: "Rajesh",
-};
-
-const activeCourses = [
-  { ...(courseData.find(c => c.id === 1)!), progress: 65 },
-  { ...(courseData.find(c => c.id === 2)!), progress: 42 },
-];
-
-const recommendedCourses = courseData.filter(c => [3, 4, 5].includes(c.id));
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Profile = () => {
   return (
     <AnimatedPage>
       <div className="container mx-auto px-4 py-8">
-        {/* Welcome Header */}
-        <div className="rounded-lg bg-blue-50 dark:bg-gray-800 p-8 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome back, {user.name}! 👋</h1>
-          <p className="text-muted-foreground mt-2">Continue your learning journey and unlock new cloud skills</p>
-        </div>
+          <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-muted-foreground">Active Courses</p>
-                <BookOpenCheck className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-bold mt-2">2</p>
-              <p className="text-xs text-muted-foreground">in progress</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-muted-foreground">Learning Hours</p>
-                <Clock className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-bold mt-2">34.5</p>
-              <p className="text-xs text-muted-foreground">This month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-muted-foreground">Certificates</p>
-                <Award className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-bold mt-2">3</p>
-              <p className="text-xs text-muted-foreground">Earned</p>
-            </CardContent>
-          </Card>
-        </div>
+          <Tabs defaultValue="profile" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
+                <TabsTrigger value="profile">Profile</TabsTrigger>
+                <TabsTrigger value="password">Password</TabsTrigger>
+                <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                <TabsTrigger value="billing">Billing</TabsTrigger>
+            </TabsList>
 
-        {/* Active Courses Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Active Courses</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {activeCourses.map((course) => (
-              <Card key={course.id} className="flex flex-col overflow-hidden rounded-lg shadow-lg">
-                 <div className="relative h-48 bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-4">
-                    <span className="font-bold text-8xl text-gray-200 dark:text-gray-700">{course.category.charAt(0)}</span>
-                     <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-semibold rounded-full ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>{course.difficulty}</span>
-                  </div>
-                <CardContent className="p-6 flex flex-col flex-grow">
-                  <span className="text-xs font-semibold uppercase text-blue-500">{course.category}</span>
-                  <h3 className="text-lg font-bold mt-2">{course.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground flex-grow">{course.description}</p>
-                  <div className="flex items-center mt-4 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 mr-2" />
-                    <span>{course.duration}</span>
-                  </div>
-                  <div className="mt-4">
-                    <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Progress</span>
-                        <span className="text-sm font-semibold text-blue-500">{course.progress}%</span>
-                    </div>
-                    <Progress value={course.progress} className="w-full h-2" />
-                  </div>
-                  <Link to={`/course/${course.id}/player`} className="mt-6 w-full">
-                    <Button variant="outline" className="w-full">Continue Learning</Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+            {/* Profile Tab */}
+            <TabsContent value="profile">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Profile Information</CardTitle>
+                        <CardDescription>Update your personal details here.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="flex items-center space-x-4">
+                            <Avatar className="h-24 w-24">
+                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                <AvatarFallback>RJ</AvatarFallback>
+                            </Avatar>
+                            <div className="space-y-1">
+                                 <Button>Change Photo</Button>
+                                 <p className="text-xs text-muted-foreground">JPG, GIF or PNG. 1MB max.</p>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <Label htmlFor="name">Full Name</Label>
+                                <Input id="name" defaultValue="Rajesh Kumar" />
+                            </div>
+                            <div>
+                                <Label htmlFor="email">Email</Label>
+                                <Input id="email" type="email" defaultValue="rajesh.kumar@example.com" disabled />
+                            </div>
+                            <div>
+                                <Label htmlFor="title">Job Title</Label>
+                                <Input id="title" defaultValue="Cloud Engineer" />
+                            </div>
+                            <div>
+                                <Label htmlFor="company">Company</Label>
+                                <Input id="company" defaultValue="Infinite Cloud" />
+                            </div>
+                        </div>
+                         <div className="flex justify-end">
+                            <Button>Save Changes</Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
 
-        {/* Recommended for You Section */}
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Recommended for You</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recommendedCourses.map((course) => (
-               <Card key={course.id} className="flex flex-col overflow-hidden rounded-lg shadow-lg">
-                <div className="relative h-48 bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-4">
-                    <span className="font-bold text-8xl text-gray-200 dark:text-gray-700">{course.category.charAt(0)}</span>
-                    <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-semibold rounded-full ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>{course.difficulty}</span>
-                </div>
-               <CardContent className="p-4 flex flex-col flex-grow">
-                 <span className="text-xs font-semibold uppercase text-blue-500">{course.category}</span>
-                 <h2 className="text-lg font-bold mt-2">{course.title}</h2>
-                 <p className="mt-2 text-sm text-muted-foreground flex-grow">{course.description}</p>
-                 <Link to={`/course/${course.id}`} className="mt-4 w-full">
-                   <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Details</Button>
-                 </Link>
-               </CardContent>
-             </Card>
-            ))}
-          </div>
-        </div>
+            {/* Password Tab */}
+            <TabsContent value="password">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Change Password</CardTitle>
+                        <CardDescription>Update your password here. It's a good idea to use a strong password that you're not using elsewhere.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div>
+                            <Label htmlFor="current-password">Current Password</Label>
+                            <Input id="current-password" type="password" />
+                        </div>
+                        <div>
+                            <Label htmlFor="new-password">New Password</Label>
+                            <Input id="new-password" type="password" />
+                        </div>
+                        <div>
+                            <Label htmlFor="confirm-password">Confirm New Password</Label>
+                            <Input id="confirm-password" type="password" />
+                        </div>
+                        <div className="flex justify-end">
+                            <Button>Update Password</Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+
+            {/* Notifications Tab */}
+            <TabsContent value="notifications">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Notification Settings</CardTitle>
+                        <CardDescription>Manage how you receive notifications.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div>
+                             <Label>Email Notifications</Label>
+                             <Select defaultValue="all">
+                                <SelectTrigger className="w-[280px]">
+                                    <SelectValue placeholder="Select a notification level" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Notifications</SelectItem>
+                                    <SelectItem value="mentions">Only @mentions and replies</SelectItem>
+                                    <SelectItem value="none">Nothing</SelectItem>
+                                </SelectContent>
+                             </Select>
+                             <p className="text-sm text-muted-foreground mt-2">Choose how much email you want to receive from us.</p>
+                        </div>
+                         <div className="flex items-center space-x-2">
+                            <Input type="checkbox" id="new-course" defaultChecked />
+                             <Label htmlFor="new-course">New course announcements</Label>
+                        </div>
+                         <div className="flex items-center space-x-2">
+                            <Input type="checkbox" id="newsletter" defaultChecked/>
+                            <Label htmlFor="newsletter">Monthly product newsletter</Label>
+                        </div>
+                         <div className="flex justify-end mt-4">
+                            <Button>Save Preferences</Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+
+             {/* Billing Tab */}
+            <TabsContent value="billing">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Billing Information</CardTitle>
+                        <CardDescription>Manage your payment methods and view your invoice history.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">No billing information on file.</p>
+                        {/* Future billing content can go here */}
+                    </CardContent>
+                </Card>
+            </TabsContent>
+          </Tabs>
       </div>
     </AnimatedPage>
   );

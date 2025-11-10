@@ -45,40 +45,63 @@ export const courseData = [
           "Amazon S3: Object Storage",
           "Amazon EBS: Block Storage for EC2",
           "Amazon EFS and FSx: File Storage",
-          "Lab: Configuring S3 buckets and policies"
+          "Lab: Creating and managing S3 buckets"
         ]
       },
-       {
+      {
         title: "Module 4: Networking and Content Delivery",
-        lessons: []
+        lessons: [
+          "Amazon VPC: Virtual Private Cloud",
+          "Amazon Route 53: DNS Service",
+          "Amazon CloudFront: Content Delivery Network",
+          "Lab: Building a custom VPC"
+        ]
+      },
+      {
+        title: "Module 5: Database Services",
+        lessons: [
+          "Amazon RDS: Relational Database Service",
+          "Amazon DynamoDB: NoSQL Database",
+          "Amazon Aurora: High Performance Relational Database",
+          "Lab: Launching an RDS instance"
+        ]
+      },
+      {
+        title: "Module 6: Security and Monitoring",
+        lessons: [
+          "AWS Security Best Practices",
+          "AWS CloudTrail and CloudWatch",
+          "AWS Trusted Advisor",
+          "Lab: Setting up CloudWatch alarms"
+        ]
       }
     ],
     resources: [
-      { title: "Exam Guide", link: "#" },
-      { title: "Whitepapers", link: "#" },
-      { title: "Sample Exam Questions", link: "#" }
+        { title: "AWS Solutions Architect Official Exam Guide", link: "#" },
+        { title: "AWS Well-Architected Framework", link: "#" },
+        { title: "Practice Exam Questions", link: "#" }
     ]
   },
   {
     id: 2,
-    title: "DevSecOps Masterclass — Secure CI/CD",
+    title: "DevSecOps Masterclass – Secure CI/CD",
     category: "DevSecOps",
     difficulty: "Intermediate",
     duration: "35 hours",
-    imageUrl: "https://static-00.iconduck.com/assets.00/devsecops-icon-512x289-x543l03g.png",
-    description: "Build secure continuous integration and deployment pipelines with industry-standard tools and practices.",
-    instructor: {
+    imageUrl: "/devsecops.png",
+    description: "Build secure continuous integration and deployment pipelines with industry tools like Jenkins, SonarQube, and OWASP ZAP.",
+     instructor: {
       name: "Krishna R",
       title: "Cloud Security Engineer",
       avatar: "K",
-      bio: "Expert cloud security engineer with over 8 years of experience in DevSecOps, infrastructure security, and compliance automation. Passionate about teaching and helping organizations build secure cloud-native applications."
+      bio: "Krishna is a security enthusiast with a passion for automating security into the development lifecycle. He specializes in building secure and compliant CI/CD pipelines."
     },
     whatYouWillLearn: [
-      "Build and secure complete CI/CD pipelines from scratch",
-      "Implement automated security scanning and vulnerability management",
-      "Master container and Kubernetes security best practices",
-      "Apply infrastructure as code security principles",
-      "Automate compliance and security policy enforcement"
+      "Integrate security testing into every phase of the SDLC",
+      "Automate security scans for static and dynamic analysis (SAST & DAST)",
+      "Implement secret management best practices",
+      "Secure containerized applications and infrastructure",
+      "Monitor and respond to security threats in real-time"
     ],
     modules: [
       {
@@ -92,145 +115,219 @@ export const courseData = [
       },
       {
         title: "Module 2: Secure CI/CD Pipelines",
-        lessons: []
-      },
-      {
-        title: "Module 3: Container Security",
-        lessons: []
-      },
-      {
-        title: "Module 4: Infrastructure Security",
-        lessons: []
+        lessons: [
+          "Integrating SAST with SonarQube",
+          "DAST with OWASP ZAP",
+          "Dependency Scanning with Snyk",
+          "Secret Management with HashiCorp Vault"
+        ]
       }
     ],
     resources: [
-      { title: "Course Slides", link: "#" },
-      { title: "Lab Files", link: "#" },
-      { title: "Sample Code", link: "#" }
+        { title: "OWASP Top 10", link: "#" },
+        { title: "SonarQube Documentation", link: "#" }
     ]
   },
-   {
+  {
     id: 3,
     title: "Terraform for Cloud Infrastructure",
     category: "Terraform",
     difficulty: "Intermediate",
-    duration: "30 hours",
+    duration: "25 hours",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/04/Terraform_Logo.svg",
-    description: "Infrastructure as Code with Terraform for AWS, Azure, and GCP multi-cloud environments.",
-    instructor: {
-      name: "Jane Smith",
-      title: "DevOps Consultant",
-      avatar: "J",
-      bio: "Jane is a DevOps consultant specializing in infrastructure as code and automation. She has extensive experience with Terraform in complex, multi-cloud environments."
+    description: "Infrastructure as Code with Terraform for AWS, Azure, and Google Cloud. Automate your infrastructure provisioning.",
+     instructor: {
+      name: "Priya M",
+      title: "DevOps Automation Specialist",
+      avatar: "P",
+      bio: "Priya is an expert in infrastructure automation with extensive experience using Terraform to manage complex cloud environments across multiple providers."
     },
     whatYouWillLearn: [
-      "Master Terraform syntax and concepts",
-      "Provision and manage infrastructure on AWS, Azure, and GCP",
-      "Write reusable and modular Terraform code",
-      "Implement best practices for collaboration and state management",
-      "Integrate Terraform into CI/CD pipelines"
+        "Master the Terraform syntax and its core concepts",
+        "Provision and manage infrastructure on AWS, Azure, and GCP",
+        "Write reusable and maintainable Terraform modules",
+        "Collaborate on infrastructure projects using Terraform Cloud"
     ],
     modules: [
       {
-        title: "Module 1: Terraform Fundamentals",
+        title: "Module 1: Getting Started with Terraform",
         lessons: [
           "Introduction to Infrastructure as Code",
           "Setting up Terraform",
-          "Terraform Syntax and Language",
-          "Lab: Writing your first Terraform configuration"
+          "Writing your first Terraform configuration"
         ]
       },
-      {
+       {
         title: "Module 2: Advanced Terraform",
-        lessons: []
-      },
-      {
-        title: "Module 3: Managing Multi-Cloud Infrastructure",
-        lessons: []
+        lessons: [
+          "Managing State",
+          "Creating and using modules",
+          "Working with multiple providers"
+        ]
       }
     ],
     resources: [
-      { title: "Terraform Documentation", link: "#" },
-      { title: "Example Code Repository", link: "#" }
+        { title: "Terraform Documentation", link: "#" },
+        { title: "Terraform Registry", link: "#" }
     ]
   },
-  // Add other courses with similar structure
-  {
+    {
     id: 4,
-    title: "Jenkins for CI/CD",
+    title: "Jenkins CI/CD Pipeline Automation",
     category: "Jenkins",
-    difficulty: "Beginner",
-    duration: "25 hours",
+    difficulty: "Intermediate",
+    duration: "20 hours",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e9/Jenkins_logo.svg",
-    description: "Learn to build automated CI/CD pipelines with Jenkins.",
-    instructor: { name: "Robert Paulson", title: "CI/CD Specialist", avatar: "R", bio: "Bob has been working with Jenkins for over a decade, helping companies streamline their software delivery process." },
-    whatYouWillLearn: ["Install and configure Jenkins", "Create and manage Jenkins jobs", "Build CI/CD pipelines using Jenkinsfiles", "Integrate Jenkins with other tools like Git, Docker, and Kubernetes"],
-    modules: [{ title: "Module 1: Jenkins Introduction", lessons: ["What is Jenkins?", "Installation and Setup", "Your First Jenkins Job"] }],
-    resources: [{ title: "Jenkins Handbook", link: "#" }]
+    description: "Automate build, test, and deployment workflows with Jenkins. Create powerful and flexible CI/CD pipelines from scratch.",
+     instructor: {
+      name: "Priya M",
+      title: "DevOps Automation Specialist",
+      avatar: "P",
+      bio: "Priya specializes in CI/CD and has helped numerous organizations streamline their software delivery process using Jenkins and other DevOps tools."
+    },
+    whatYouWillLearn: [
+        "Install and configure a Jenkins server",
+        "Create and manage Jenkins jobs and pipelines",
+        "Integrate Jenkins with Git, Docker, and other tools",
+        "Write declarative and scripted pipelines"
+    ],
+    modules: [
+      {
+        title: "Module 1: Jenkins Fundamentals",
+        lessons: [
+          "Introduction to CI/CD",
+          "Installing Jenkins",
+          "Your first Jenkins job"
+        ]
+      },
+      {
+        title: "Module 2: Building Pipelines",
+        lessons: [
+          "Declarative vs. Scripted Pipeline",
+          "Integrating Git",
+          "Building and testing applications"
+        ]
+      }
+    ],
+    resources: [
+        { title: "Jenkins Documentation", link: "#" }
+    ]
   },
   {
     id: 5,
-    title: "Kubernetes for Developers",
+    title: "Kubernetes Security Best Practices",
     category: "Kubernetes",
-    difficulty: "Intermediate",
-    duration: "38 hours",
+    difficulty: "Advanced",
+    duration: "30 hours",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg",
-    description: "A practical guide to deploying and managing applications on Kubernetes.",
-    instructor: { name: "Alice Wonder", title: "Kubernetes Expert", avatar: "A", bio: "Alice is a Certified Kubernetes Administrator and has deployed Kubernetes clusters for numerous startups and enterprises." },
-    whatYouWillLearn: ["Understand Kubernetes architecture", "Deploy applications using Pods, Deployments, and Services", "Manage application configuration and storage", "Implement logging, monitoring, and troubleshooting"],
-    modules: [{ title: "Module 1: Kubernetes Core Concepts", lessons: ["Introduction to Kubernetes", "Pods, ReplicaSets, and Deployments", "Services and Networking"] }],
-    resources: [{ title: "Kubernetes in Action (Book)", link: "#" }]
+    description: "Secure your containerized applications and orchestration with Kubernetes. Learn to implement security policies and best practices.",
+    instructor: {
+      name: "Krishna R",
+      title: "Cloud Security Engineer",
+      avatar: "K",
+      bio: "Krishna focuses on container security and has deep expertise in securing Kubernetes clusters in production environments."
+    },
+     whatYouWillLearn: [
+        "Understand the Kubernetes security model",
+        "Implement network policies to control traffic flow",
+        "Use Pod Security Policies to enforce security standards",
+        "Scan container images for vulnerabilities",
+        "Monitor and audit Kubernetes clusters for security events"
+    ],
+    modules: [
+      {
+        title: "Module 1: Kubernetes Security Fundamentals",
+        lessons: [
+          "Pod Security Policies",
+          "Network Policies",
+          "Role-Based Access Control (RBAC)"
+        ]
+      },
+       {
+        title: "Module 2: Hardening and Monitoring",
+        lessons: [
+          "Securing the Kubernetes API Server",
+          "Image vulnerability scanning",
+          "Auditing and logging"
+        ]
+      }
+    ],
+    resources: [
+        { title: "Kubernetes Security Documentation", link: "#" }
+    ]
   },
   {
     id: 6,
-    title: "Docker for Beginners",
-    category: "Docker",
-    difficulty: "Beginner",
-    duration: "20 hours",
-    imageUrl: "https://www.svgrepo.com/show/349342/docker.svg",
-    description: "Understand Docker fundamentals and containerize your applications.",
-    instructor: { name: "Frank Wright", title: "Container Guru", avatar: "F", bio: "Frank lives and breathes containers. He has been using Docker since its early days and is an official Docker Community Leader." },
-    whatYouWillLearn: ["Understand containerization and Docker", "Build and manage Docker images", "Run and orchestrate containers", "Use Docker Compose for multi-container applications"],
-    modules: [{ title: "Module 1: Docker Fundamentals", lessons: ["What is Docker?", "Installing Docker", "Running your first container"] }],
-    resources: [{ title: "Docker Cheatsheet", link: "#" }]
-  },
-  {
-    id: 7,
-    title: "Ansible for Automation",
-    category: "Ansible",
+    title: "AWS & DevOps Complete Internship",
+    category: "Learning Paths",
     difficulty: "Intermediate",
-    duration: "32 hours",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/2/23/Ansible_Logo.svg",
-    description: "Automate your infrastructure and application deployment with Ansible.",
-    instructor: { name: "Grace Hopper", title: "Automation Architect", avatar: "G", bio: "Grace is a renowned automation expert who has written several books on Ansible and IT automation." },
-    whatYouWillLearn: ["Understand the principles of automation", "Write Ansible playbooks", "Manage inventories and variables", "Use Ansible roles for code reuse", "Automate complex workflows"],
-    modules: [{ title: "Module 1: Getting Started with Ansible", lessons: ["Introduction to Ansible", "Setting up an Ansible environment", "Your first playbook"] }],
-    resources: [{ title: "Ansible Official Docs", link: "#" }]
-  },
-  {
-    id: 8,
-    title: "Advanced Kubernetes",
-    category: "Kubernetes",
-    difficulty: "Advanced",
-    duration: "45 hours",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg",
-    description: "Deep dive into advanced Kubernetes concepts and features.",
-    instructor: { name: "Alice Wonder", title: "Kubernetes Expert", avatar: "A", bio: "Alice is a Certified Kubernetes Administrator and has deployed Kubernetes clusters for numerous startups and enterprises." },
-    whatYouWillLearn: ["Advanced scheduling and pod placement", "Cluster security and hardening", "Service mesh with Istio", "Extending Kubernetes with custom controllers"],
-    modules: [{ title: "Module 1: Security", lessons: ["RBAC", "Pod Security Policies", "Network Policies"] }],
-    resources: [{ title: "Kubernetes Documentation", link: "#" }]
-  },
-  {
-    id: 9,
-    title: "Docker Swarm for Orchestration",
-    category: "Docker",
-    difficulty: "Intermediate",
-    duration: "28 hours",
-    imageUrl: "https://www.svgrepo.com/show/349342/docker.svg",
-    description: "Learn how to use Docker Swarm for orchestrating containers.",
-    instructor: { name: "Frank Wright", title: "Container Guru", avatar: "F", bio: "Frank lives and breathes containers. He has been using Docker since its early days and is an official Docker Community Leader." },
-    whatYouWillLearn: ["Understand container orchestration", "Set up a Docker Swarm cluster", "Deploy and manage services on Swarm", "Manage configuration and secrets"],
-    modules: [{ title: "Module 1: Introduction to Docker Swarm", lessons: ["What is Swarm?", "Initializing a Swarm cluster", "Deploying a service"] }],
-    resources: [{ title: "Docker Swarm Tutorial", link: "#" }]
+    duration: "120 hours",
+    imageUrl: "",
+    description: "A comprehensive internship program covering the entire AWS and DevOps ecosystem. From cloud fundamentals to advanced automation and security.",
+    instructor: {
+      name: "Infinitely Cloud Labs Team",
+      title: "Expert Instructors",
+      avatar: "ICL",
+      bio: "This program is taught by a team of our top instructors, each bringing their specialized expertise to the table."
+    },
+     whatYouWillLearn: [
+        "Master core AWS services for compute, storage, networking, and databases",
+        "Implement Infrastructure as Code with Terraform",
+        "Build and manage CI/CD pipelines with Jenkins and GitLab",
+        "Containerize applications with Docker and orchestrate with Kubernetes",
+        "Integrate security best practices throughout the DevOps lifecycle (DevSecOps)",
+        "Gain hands-on experience with real-world projects and scenarios"
+    ],
+    modules: [
+      {
+        title: "Phase 1: Cloud Foundations (AWS)",
+        lessons: [
+          "AWS Core Services & Architecture",
+          "VPC Networking and Security Groups",
+          "IAM and Security Best Practices",
+          "Project: Deploy a 3-Tier Web Application"
+        ]
+      },
+       {
+        title: "Phase 2: Infrastructure as Code",
+        lessons: [
+          "Terraform Basics & Language Syntax",
+          "Provisioning AWS Resources with Terraform",
+          "State Management and Modules",
+          "Project: Automate Your 3-Tier App Deployment"
+        ]
+      },
+      {
+        title: "Phase 3: CI/CD & Automation",
+        lessons: [
+          "Git, Jenkins, and Ansible Fundamentals",
+          "Building a Jenkins CI/CD Pipeline",
+          "Automating Deployments with Ansible",
+          "Project: Create a Full CI/CD Pipeline for a Web App"
+        ]
+      },
+       {
+        title: "Phase 4: Containers & Orchestration",
+        lessons: [
+          "Docker Fundamentals & Image Creation",
+          "Introduction to Kubernetes",
+          "Deploying and Managing Applications on EKS",
+          "Project: Containerize and Deploy Your App on Kubernetes"
+        ]
+      },
+       {
+        title: "Phase 5: DevSecOps",
+        lessons: [
+          "Integrating SAST & DAST in Pipelines",
+          "Container Security Scanning",
+          "Secrets Management with Vault",
+          "Project: Secure Your CI/CD Pipeline"
+        ]
+      }
+    ],
+    resources: [
+        { title: "Internship Project Workbook", link: "#" },
+        { title: "Private Slack Community Access", link: "#" }
+    ]
   }
 ];

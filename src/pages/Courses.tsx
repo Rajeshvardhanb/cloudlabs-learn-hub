@@ -7,7 +7,7 @@ import { Clock, Search } from "lucide-react";
 import { useState } from "react";
 import { courseData } from "@/data/courseData";
 
-const categories = ["All", "AWS", "DevSecOps", "Terraform", "Jenkins", "Kubernetes", "Docker", "Ansible"];
+const categories = ["All", "Learning Paths", "AWS", "DevSecOps", "Terraform", "Jenkins", "Kubernetes", "Docker", "Ansible"];
 
 const Courses = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
