@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,8 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setTimeout(() => {
+      // Simulate storing user data in localStorage
+      localStorage.setItem("user", JSON.stringify({ name: "Rajesh" }));
       toast.success("Login successful!");
       navigate("/dashboard");
       setIsLoading(false);
@@ -22,80 +24,70 @@ const Auth = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full grid lg:grid-cols-2 bg-white">
-
-      {/* Left Panel */}
-      <div className="relative hidden lg:flex flex-col items-center justify-center text-center p-12">
-        <div className="relative z-10 flex flex-col items-center">
-          <img src={logo} alt="Infinity Cloud Labs" className="mb-6 h-20 w-auto" />
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Learn. Build. Secure the Cloud.
-          </h1>
-          <p className="text-sm text-gray-500 mb-8">Designed By Infinitely Cloud Labs</p>
-          <blockquote className="text-lg text-gray-600 italic max-w-md">
-            <p className="before:content-['\201C'] after:content-['\201D']">
-              DevOps is not a goal, but a never-ending process of continual improvement.
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
+        {/* Left Panel (Branding) */}
+        <div className="hidden lg:flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black p-12 text-white relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full bg-grid-white/[0.1] z-0"></div>
+          <div className="z-10 text-center">
+            <img src={logo} alt="Infinity Cloud Labs Logo" className="w-32 h-32 mx-auto mb-6" />
+            <h1 className="text-5xl font-extrabold tracking-tight">INFINITY CLOUD LABS</h1>
+            <p className="mt-4 text-lg text-gray-300">
+              The future of cloud learning, today.
             </p>
-            <cite className="block text-right not-italic mt-2 text-sm">- Jez Humble</cite>
-          </blockquote>
+          </div>
         </div>
-        <Wave />
-      </div>
 
-      {/* Right Panel (Login Form) */}
-      <div className="flex items-center justify-center p-8 bg-gray-50">
-        <div className="w-full max-w-sm">
-          <div className="bg-white p-8 rounded-xl shadow-2xl">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-800">Sign In</h1>
-              <p className="text-gray-500 mt-2">Welcome back! Please enter your credentials.</p>
+        {/* Right Panel (Login Form) */}
+        <div className="flex items-center justify-center p-8 bg-gray-50">
+          <div className="w-full max-w-sm">
+            <div className="bg-white p-8 rounded-xl shadow-2xl">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-800">Sign In</h1>
+                <p className="text-gray-500 mt-2">Welcome back! Please enter your credentials.</p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="rajesh@example.com"
+                    required
+                    className="bg-gray-100 border-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    <a href="#" className="text-sm text-blue-500 hover:underline">Forgot password?</a>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    defaultValue="password"
+                    className="bg-gray-100 border-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white hover:scale-105 transition-transform duration-300"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Signing in..." : "Sign In"}
+                  </Button>
+                </div>
+              </form>
             </div>
-
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="rajesh@example.com"
-                  required
-                  className="bg-gray-100 border-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  className="bg-gray-100 border-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="text-right">
-                <Link
-                  to="#"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-
-              <div>
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white hover:scale-105 transition-transform duration-300"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing in..." : "Sign In"}
-                </Button>
-              </div>
-            </form>
           </div>
         </div>
       </div>
+      <Wave />
     </div>
   );
 };

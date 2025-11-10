@@ -1,7 +1,4 @@
 import { useState } from "react";
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -85,10 +82,8 @@ const allCourses = [
 const categories = ["All", "AWS", "DevSecOps", "Terraform", "Jenkins", "Kubernetes", "Docker", "Ansible"];
 
 const Courses = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const user = { name: "Rajesh" };
 
   const filteredCourses = allCourses.filter((course) => {
     const matchesCategory = selectedCategory === "All" || course.category === selectedCategory;
@@ -98,86 +93,70 @@ const Courses = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-        showMenu
-        user={user}
-      />
-
-      <div className="flex flex-1">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-        <main className="flex-1 lg:ml-64">
-          <div className="container p-6 space-y-8">
-            {/* Header */}
-            <div>
-              <h1 className="text-3xl font-heading font-bold mb-2">Course Catalog</h1>
-              <p className="text-muted-foreground">
-                Explore our comprehensive collection of cloud and security courses
-              </p>
-            </div>
-
-            {/* Search and Filters */}
-            <div className="space-y-4">
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search courses..."
-                  className="pl-9"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCategory(category)}
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Results */}
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Showing {filteredCourses.length} {filteredCourses.length === 1 ? "course" : "courses"}
-              </p>
-              
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredCourses.map((course) => (
-                  <CourseCard key={course.id} {...course} />
-                ))}
-              </div>
-
-              {filteredCourses.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No courses found matching your criteria.</p>
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      setSelectedCategory("All");
-                      setSearchQuery("");
-                    }}
-                    className="mt-2"
-                  >
-                    Clear filters
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </main>
+    <div className="container p-6 space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-heading font-bold mb-2">Course Catalog</h1>
+        <p className="text-muted-foreground">
+          Explore our comprehensive collection of cloud and security courses
+        </p>
       </div>
 
-      <Footer />
+      {/* Search and Filters */}
+      <div className="space-y-4">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search courses..."
+            className="pl-9"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {categories.map((category) => (
+            <Button
+              key={category}
+              variant={selectedCategory === category ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Results */}
+      <div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Showing {filteredCourses.length} {filteredCourses.length === 1 ? "course" : "courses"}
+        </p>
+        
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredCourses.map((course) => (
+            <CourseCard key={course.id} {...course} />
+          ))}
+        </div>
+
+        {filteredCourses.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No courses found matching your criteria.</p>
+            <Button
+              variant="link"
+              onClick={() => {
+                setSelectedCategory("All");
+                setSearchQuery("");
+              }}
+              className="mt-2"
+            >
+              Clear filters
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
