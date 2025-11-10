@@ -282,46 +282,46 @@ export const courseData = [
       {
         title: "Phase 1: Cloud Foundations (AWS)",
         lessons: [
-          "AWS Core Services & Architecture",
-          "VPC Networking and Security Groups",
-          "IAM and Security Best Practices",
-          "Project: Deploy a 3-Tier Web Application"
+          { title: "AWS Core Services & Architecture", videoUrl: "https://youtu.be/MXqjhE48jV8", duration: "18:45" },
+          { title: "VPC Networking and Security Groups", duration: "22:30" },
+          { title: "IAM and Security Best Practices", duration: "19:15" },
+          { title: "Project: Deploy a 3-Tier Web Application", duration: "45:00" }
         ]
       },
        {
         title: "Phase 2: Infrastructure as Code",
         lessons: [
-          "Terraform Basics & Language Syntax",
-          "Provisioning AWS Resources with Terraform",
-          "State Management and Modules",
-          "Project: Automate Your 3-Tier App Deployment"
+          { title: "Terraform Basics & Language Syntax", duration: "25:00" },
+          { title: "Provisioning AWS Resources with Terraform", duration: "32:15" },
+          { title: "State Management and Modules", duration: "28:40" },
+          { title: "Project: Automate Your 3-Tier App Deployment", duration: "50:00" }
         ]
       },
       {
         title: "Phase 3: CI/CD & Automation",
         lessons: [
-          "Git, Jenkins, and Ansible Fundamentals",
-          "Building a Jenkins CI/CD Pipeline",
-          "Automating Deployments with Ansible",
-          "Project: Create a Full CI/CD Pipeline for a Web App"
+          { title: "Git, Jenkins, and Ansible Fundamentals", duration: "30:00" },
+          { title: "Building a Jenkins CI/CD Pipeline", duration: "35:20" },
+          { title: "Automating Deployments with Ansible", duration: "28:50" },
+          { title: "Project: Create a Full CI/CD Pipeline for a Web App", duration: "55:00" }
         ]
       },
        {
         title: "Phase 4: Containers & Orchestration",
         lessons: [
-          "Docker Fundamentals & Image Creation",
-          "Introduction to Kubernetes",
-          "Deploying and Managing Applications on EKS",
-          "Project: Containerize and Deploy Your App on Kubernetes"
+          { title: "Docker Fundamentals & Image Creation", duration: "27:30" },
+          { title: "Introduction to Kubernetes", duration: "40:00" },
+          { title: "Deploying and Managing Applications on EKS", duration: "38:45" },
+          { title: "Project: Containerize and Deploy Your App on Kubernetes", duration: "60:00" }
         ]
       },
        {
         title: "Phase 5: DevSecOps",
         lessons: [
-          "Integrating SAST & DAST in Pipelines",
-          "Container Security Scanning",
-          "Secrets Management with Vault",
-          "Project: Secure Your CI/CD Pipeline"
+          { title: "Integrating SAST & DAST in Pipelines", duration: "32:00" },
+          { title: "Container Security Scanning", duration: "26:15" },
+          { title: "Secrets Management with Vault", duration: "24:30" },
+          { title: "Project: Secure Your CI/CD Pipeline", duration: "48:00" }
         ]
       }
     ],
