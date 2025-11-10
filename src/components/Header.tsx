@@ -12,8 +12,8 @@ interface HeaderProps {
 
 const Header = ({ onMenuClick, showMenu = false, user = null }: HeaderProps) => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 shadow-sm">
-      <div className="container flex h-16 items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
+      <div className="container flex h-20 items-center justify-between px-6">
         <div className="flex items-center gap-4">
           {showMenu && (
             <Button
@@ -26,7 +26,8 @@ const Header = ({ onMenuClick, showMenu = false, user = null }: HeaderProps) => 
             </Button>
           )}
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="INFINITELY CLOUD LABS" className="h-10 w-auto" />
+            <img src={logo} alt="INFINITELY CLOUD LABS" className="h-16 w-16 rounded-full" />
+            <span className="text-xl font-bold text-gray-800">INFINITY CLOUD LABS</span>
           </Link>
         </div>
 
