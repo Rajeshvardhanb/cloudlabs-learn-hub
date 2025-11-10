@@ -1,13 +1,13 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const user = localStorage.getItem("user");
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/auth" />;
   }
 
-  return <Outlet />;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

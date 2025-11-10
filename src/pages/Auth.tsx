@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,56 +6,99 @@ import { Label } from "@/components/ui/label";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 import Wave from "@/components/ui/wave";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AnimatedPage from "@/components/AnimatedPage";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/firebase";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Clear any existing user session when the login page is loaded
-    localStorage.removeItem("user");
-  }, []);
-
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
-      // Simulate storing user data in localStorage
-      localStorage.setItem("user", JSON.stringify({ name: "Rajesh" }));
+    const email = (e.target as any).email.value;
+    const password = (e.target as any).password.value;
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: user.displayName || user.email, // Fallback to email
+          email: user.email,
+          image: user.photoURL || "", // Fallback to empty string
+        })
+      );
       toast.success("Login successful!");
       navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: user.displayName || user.email, // Fallback to email
+          email: user.email,
+          image: user.photoURL || "", // Fallback to empty string
+        })
+      );
+      toast.success("Signed in with Google successfully!");
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <AnimatedPage>
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
-          {/* Left Panel (Branding) */}
           <div className="hidden lg:flex flex-col items-center justify-center bg-white p-12 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full bg-grid-black/[0.05] z-0"></div>
             <div className="z-10 text-center">
-              <img src={logo} alt="Infinity Cloud Labs Logo" className="w-96 h-96 mx-auto mb-6" />
-              <h1 className="text-5xl font-heading font-extrabold tracking-tight text-gray-800">INFINITY CLOUD LABS</h1>
+              <img
+                src={logo}
+                alt="Infinity Cloud Labs Logo"
+                className="w-96 h-96 mx-auto mb-6"
+              />
+              <h1 className="text-5xl font-heading font-extrabold tracking-tight text-gray-800">
+                INFINITY CLOUD LABS
+              </h1>
               <p className="mt-4 text-lg text-gray-500">
                 The future of cloud learning, today.
               </p>
             </div>
             <div className="absolute bottom-0 left-0 w-full">
-                <Wave />
+              <Wave />
             </div>
           </div>
 
-          {/* Right Panel (Login Form) */}
           <div className="flex items-center justify-center p-8 bg-gray-50">
             <div className="w-full max-w-sm">
               <div className="bg-white p-8 rounded-xl shadow-2xl">
                 <div className="text-center mb-8">
                   <h1 className="text-3xl font-bold text-gray-800">Sign In</h1>
-                  <p className="text-gray-500 mt-2">Welcome back! Please enter your credentials.</p>
+                  <p className="text-gray-500 mt-2">
+                    Welcome back! Please enter your credentials.
+                  </p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
@@ -72,7 +116,12 @@ const Auth = () => {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="password">Password</Label>
-                      <a href="#" className="text-sm text-blue-500 hover:underline">Forgot password?</a>
+                      <a
+                        href="#"
+                        className="text-sm text-blue-500 hover:underline"
+                      >
+                        Forgot password?
+                      </a>
                     </div>
                     <Input
                       id="password"
@@ -93,6 +142,16 @@ const Auth = () => {
                     </Button>
                   </div>
                 </form>
+
+                <div className="mt-6">
+                  <Button
+                    onClick={handleGoogleSignIn}
+                    className="w-full bg-red-500 text-white hover:bg-red-600"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Signing in..." : "Sign in with Google"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

@@ -1,137 +1,55 @@
-import { useEffect, useState } from "react";
-import CourseCard from "@/components/CourseCard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Clock, Award } from "lucide-react";
-import Header from "@/components/Header";
 import AnimatedPage from "@/components/AnimatedPage";
 
-const activeCourses = [
-  {
-    id: "aws-foundations",
-    title: "AWS Certified Solutions Architect — Foundations",
-    description: "Master AWS core services and architectural best practices for cloud solutions.",
-    duration: "40 hours",
-    difficulty: "Beginner" as const,
-    category: "AWS",
-    progress: 65,
-  },
-  {
-    id: "devsecops-masterclass",
-    title: "DevSecOps Masterclass — Secure CI/CD",
-    description: "Build secure continuous integration and deployment pipelines with industry tools.",
-    duration: "35 hours",
-    difficulty: "Intermediate" as const,
-    category: "DevSecOps",
-    progress: 42,
-  },
-];
-
-const recommendedCourses = [
-  {
-    id: "terraform-infrastructure",
-    title: "Terraform for Cloud Infrastructure",
-    description: "Infrastructure as Code with Terraform for AWS, Azure, and GCP deployments.",
-    duration: "30 hours",
-    difficulty: "Intermediate" as const,
-    category: "Terraform",
-  },
-  {
-    id: "jenkins-automation",
-    title: "Jenkins CI/CD Pipeline Automation",
-    description: "Automate build, test, and deployment workflows with Jenkins.",
-    duration: "25 hours",
-    difficulty: "Intermediate" as const,
-    category: "Jenkins",
-  },
-  {
-    id: "kubernetes-security",
-    title: "Kubernetes Security Best Practices",
-    description: "Secure your containerized applications and orchestration platform.",
-    duration: "28 hours",
-    difficulty: "Advanced" as const,
-    category: "Kubernetes",
-  },
-];
-
 const Dashboard = () => {
-  const [user, setUser] = useState<{ name: string } | null>(null);
-
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-
   return (
     <AnimatedPage>
-      <Header />
-      <div className="container p-6 space-y-8">
-        {/* Welcome Section */}
-        <div className="rounded-2xl bg-gradient-hero p-8 shadow-card">
-          <h1 className="text-3xl font-heading font-bold mb-2">
-            Welcome back, {user?.name}! 👋
-          </h1>
-          <p className="text-muted-foreground">
-            Continue your learning journey and unlock new cloud skills
-          </p>
-        </div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
+          Welcome to Your Dashboard
+        </h1>
+        <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+          This is your central hub for all activities. You can view your
+          courses, track your progress, and manage your account settings from
+          here.
+        </p>
 
-        {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">2</div>
-              <p className="text-xs text-muted-foreground">In progress</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Learning Hours</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">34.5</div>
-              <p className="text-xs text-muted-foreground">This month</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Certificates</CardTitle>
-              <Award className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">3</div>
-              <p className="text-xs text-muted-foreground">Earned</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Active Courses */}
-        <section>
-          <h2 className="text-2xl font-heading font-bold mb-4">Active Courses</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            {activeCourses.map((course) => (
-              <CourseCard key={course.id} {...course} />
-            ))}
+        <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+              My Courses
+            </h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Browse and access all the courses you are currently enrolled in.
+            </p>
+            <button className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+              View Courses
+            </button>
           </div>
-        </section>
 
-        {/* Recommended Courses */}
-        <section>
-          <h2 className="text-2xl font-heading font-bold mb-4">Recommended for You</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {recommendedCourses.map((course) => (
-              <CourseCard key={course.id} {...course} />
-            ))}
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+              Recent Activity
+            </h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Check your latest interactions, achievements, and notifications.
+            </p>
+            <button className="mt-4 rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+              Show Activity
+            </button>
           </div>
-        </section>
+
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+              Profile Settings
+            </h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Update your personal information and communication preferences.
+            </p>
+            <button className="mt-4 rounded-md bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">
+              Edit Profile
+            </button>
+          </div>
+        </div>
       </div>
     </AnimatedPage>
   );
