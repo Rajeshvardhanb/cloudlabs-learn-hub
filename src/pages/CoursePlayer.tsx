@@ -41,24 +41,6 @@ const CoursePlayer = () => {
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900 font-geist">
       {/* Main Content */}
       <main className="flex-1 flex flex-col transition-all duration-300">
-        <header className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-4">
-            <img src="/logo.svg" alt="Logo" className="h-8 w-8" />
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
-              R
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
-              {isSidebarOpen ? <X /> : <Menu />}
-            </Button>
-          </div>
-        </header>
-
         <div className="flex-1 flex flex-col p-8 overflow-y-auto">
           {/* Video Player */}
           <div className="relative aspect-video bg-gray-900 rounded-lg flex items-center justify-center">

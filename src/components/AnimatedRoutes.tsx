@@ -21,14 +21,6 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route index element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-        <Route
-            path="/course/:id/player"
-            element={
-              <ProtectedRoute>
-                <CoursePlayer />
-              </ProtectedRoute>
-            }
-          />
         <Route element={<Layout />}>
           <Route
             path="/dashboard"
@@ -51,6 +43,14 @@ const AnimatedRoutes = () => {
             element={
               <ProtectedRoute>
                 <CourseDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/course/:id/player"
+            element={
+              <ProtectedRoute>
+                <CoursePlayer />
               </ProtectedRoute>
             }
           />
