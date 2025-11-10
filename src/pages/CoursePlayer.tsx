@@ -1,186 +1,164 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import Header from "@/components/Header";
+import {
+  PlayCircle,
+  CheckCircle,
+  Lock,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, PlayCircle, ChevronLeft, ChevronRight, FileText } from "lucide-react";
-import { toast } from "sonner";
-import AnimatedPage from "@/components/AnimatedPage";
-
-const courseModules = [
-  {
-    title: "Module 1: Introduction to DevSecOps",
-    lessons: [
-      { id: 1, title: "Understanding DevSecOps Culture", duration: "12:30", completed: true },
-      { id: 2, title: "Security in the Software Development Lifecycle", duration: "15:45", completed: true },
-      { id: 3, title: "DevSecOps Tools Overview", duration: "18:20", completed: false },
-      { id: 4, title: "Setting Up Your Lab Environment", duration: "22:15", completed: false },
-    ],
-  },
-  {
-    title: "Module 2: Secure CI/CD Pipelines",
-    lessons: [
-      { id: 5, title: "Pipeline Security Fundamentals", duration: "16:40", completed: false },
-      { id: 6, title: "Integrating Security Scanning", duration: "19:30", completed: false },
-      { id: 7, title: "Secret Management in Pipelines", duration: "14:25", completed: false },
-      { id: 8, title: "Automated Security Testing", duration: "21:10", completed: false },
-    ],
-  },
-];
+import { courseData } from "@/data/courseData";
+import { useParams, Navigate } from "react-router-dom";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const CoursePlayer = () => {
-  const { id } = useParams();
-  const [currentLesson, setCurrentLesson] = useState(3);
-  const [notes, setNotes] = useState("");
+  const { id } = useParams<{ id: string }>();
+  const course = courseData.find((c) => c.id === parseInt(id || ""));
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const handleMarkComplete = () => {
-    toast.success("Lesson marked as complete!");
+  // In a real app, you would track the current lesson
+  const currentLesson = {
+    moduleIndex: 0,
+    lessonIndex: 2,
+    title: "DevSecOps Tools Overview",
+    duration: "18:20",
+  };
+
+  if (!course) {
+    return <Navigate to="/courses" />;
+  }
+
+  const sidebarVariants = {
+    open: { width: 350, x: 0 },
+    closed: { width: 0, x: 350 },
   };
 
   return (
-    <AnimatedPage>
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-
-        <div className="flex-1 flex">
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col">
-            {/* Video Player */}
-            <div className="bg-accent aspect-video w-full flex items-center justify-center">
-              <div className="text-center space-y-4">
-                <div className="h-20 w-20 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
-                  <PlayCircle className="h-10 w-10 text-primary" />
-                </div>
-                <p className="text-muted-foreground">
-                  Video Player Placeholder
-                  <br />
-                  <span className="text-sm">(YouTube unlisted video would be embedded here)</span>
-                </p>
-              </div>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 font-geist">
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col transition-all duration-300">
+        <header className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-4">
+            <img src="/logo.svg" alt="Logo" className="h-8 w-8" />
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+              R
             </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              {isSidebarOpen ? <X /> : <Menu />}
+            </Button>
+          </div>
+        </header>
 
-            {/* Lesson Info & Tabs */}
-            <div className="p-6 space-y-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h1 className="text-2xl font-heading font-bold mb-2">
-                    DevSecOps Tools Overview
-                  </h1>
-                  <p className="text-sm text-muted-foreground">
-                    Module 1 • Lesson 3 • 18:20
-                  </p>
-                </div>
-                <Button onClick={handleMarkComplete}>
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Mark Complete
-                </Button>
-              </div>
-
-              <Tabs defaultValue="notes" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="notes">Notes</TabsTrigger>
-                  <TabsTrigger value="qa">Q&A</TabsTrigger>
-                  <TabsTrigger value="resources">Resources</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="notes" className="space-y-4">
-                  <Textarea
-                    placeholder="Take notes while watching..."
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="min-h-[200px]"
-                  />
-                  <Button size="sm">Save Notes</Button>
-                </TabsContent>
-
-                <TabsContent value="qa" className="space-y-4">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <p className="text-sm text-muted-foreground text-center py-8">
-                        No questions yet. Be the first to ask!
-                      </p>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="resources" className="space-y-4">
-                  <Card>
-                    <CardContent className="flex items-center justify-between p-4">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-8 w-8 text-primary" />
-                        <div>
-                          <p className="font-semibold">Lesson Slides</p>
-                          <p className="text-sm text-muted-foreground">PDF Document</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Download
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-
-              {/* Navigation */}
-              <div className="flex justify-between pt-4">
-                <Button variant="outline">
-                  <ChevronLeft className="mr-2 h-4 w-4" />
-                  Previous Lesson
-                </Button>
-                <Button>
-                  Next Lesson
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+        <div className="flex-1 flex flex-col p-8 overflow-y-auto">
+          {/* Video Player */}
+          <div className="relative aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
+            <PlayCircle className="h-16 w-16 text-gray-500" />
+            <p className="absolute bottom-4 text-gray-400 text-sm">
+              Video Player Placeholder (YouTube unlisted video would be
+              embedded here)
+            </p>
           </div>
 
-          {/* Lesson List Sidebar */}
-          <aside className="w-80 border-l bg-card overflow-y-auto hidden lg:block">
-            <div className="p-4 border-b">
-              <h2 className="font-heading font-bold">Course Content</h2>
+          {/* Lesson Details */}
+          <div className="mt-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold">{currentLesson.title}</h1>
+              <p className="text-gray-500 mt-1">
+                Module {currentLesson.moduleIndex + 1} &bull; Lesson{" "}
+                {currentLesson.lessonIndex + 1} &bull; {currentLesson.duration}
+              </p>
             </div>
-            <Accordion type="single" collapsible defaultValue="module-0" className="px-2">
-              {courseModules.map((module, moduleIndex) => (
-                <AccordionItem key={moduleIndex} value={`module-${moduleIndex}`}>
-                  <AccordionTrigger className="text-sm font-semibold px-2">
-                    {module.title}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-1">
-                      {module.lessons.map((lesson) => (
-                        <button
-                          key={lesson.id}
-                          onClick={() => setCurrentLesson(lesson.id)}
-                          className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors ${
-                            currentLesson === lesson.id
-                              ? "bg-primary/10 text-primary"
-                              : "hover:bg-muted"
-                          }`}
-                        >
-                          {lesson.completed ? (
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          ) : (
-                            <PlayCircle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium line-clamp-2">{lesson.title}</p>
-                            <p className="text-xs text-muted-foreground">{lesson.duration}</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </aside>
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+              <CheckCircle className="h-5 w-5 mr-2" />
+              Mark Complete
+            </Button>
+          </div>
+
+          {/* Tabs for Notes, Q&A, Resources */}
+          <Tabs defaultValue="notes" className="mt-8">
+            <TabsList>
+              <TabsTrigger value="notes">Notes</TabsTrigger>
+              <TabsTrigger value="qna">Q&A</TabsTrigger>
+              <TabsTrigger value="resources">Resources</TabsTrigger>
+            </TabsList>
+            <TabsContent value="notes" className="mt-4">
+              <Textarea
+                placeholder="Take notes while watching..."
+                className="min-h-[150px]"
+              />
+              <Button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white">Save Notes</Button>
+            </TabsContent>
+             <TabsContent value="qna" className="mt-4">
+              <p>Q&A section coming soon.</p>
+            </TabsContent>
+             <TabsContent value="resources" className="mt-4">
+              <p>Resources section coming soon.</p>
+            </TabsContent>
+          </Tabs>
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-8 border-t pt-6">
+            <Button variant="outline">
+              <ChevronLeft className="h-5 w-5 mr-2" />
+              Previous Lesson
+            </Button>
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+              Next Lesson
+              <ChevronRight className="h-5 w-5 ml-2" />
+            </Button>
+          </div>
         </div>
-      </div>
-    </AnimatedPage>
+      </main>
+
+      {/* Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.aside
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={sidebarVariants}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-full overflow-y-auto"
+          >
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="font-bold text-xl">{course.title}</h2>
+            </div>
+            <div className="flex-1 p-2">
+              {course.modules.map((module, moduleIndex) => (
+                <div key={moduleIndex} className="mb-4">
+                  <h3 className="font-semibold p-2">{module.title}</h3>
+                  <ul>
+                    {module.lessons.map((lesson, lessonIndex) => {
+                      const isCurrent = moduleIndex === currentLesson.moduleIndex && lessonIndex === currentLesson.lessonIndex;
+                      return (
+                         <li key={lessonIndex} className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${isCurrent ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                           <div className="flex items-center">
+                            {isCurrent ? <PlayCircle className="h-5 w-5 mr-3 text-blue-500" /> : <CheckCircle className="h-5 w-5 mr-3 text-gray-400" />}
+                            <span>{lesson}</span>
+                           </div>
+                           <span className="text-sm text-gray-500">12:30</span>
+                         </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

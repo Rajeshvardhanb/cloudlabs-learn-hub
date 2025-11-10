@@ -10,6 +10,8 @@ import Docs from "@/pages/Docs";
 import Instructors from "@/pages/Instructors";
 import Contact from "@/pages/Contact";
 import Profile from "@/pages/Profile";
+import CourseDetails from "@/pages/CourseDetails";
+import CoursePlayer from "@/pages/CoursePlayer";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -19,6 +21,14 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route index element={<Home />} />
         <Route path="/auth" element={<Auth />} />
+        <Route
+            path="/course/:id/player"
+            element={
+              <ProtectedRoute>
+                <CoursePlayer />
+              </ProtectedRoute>
+            }
+          />
         <Route element={<Layout />}>
           <Route
             path="/dashboard"
@@ -33,6 +43,14 @@ const AnimatedRoutes = () => {
             element={
               <ProtectedRoute>
                 <Courses />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/course/:id"
+            element={
+              <ProtectedRoute>
+                <CourseDetails />
               </ProtectedRoute>
             }
           />
