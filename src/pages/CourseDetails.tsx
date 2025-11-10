@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Clock, Signal, PlayCircle, FileText, Github, User } from "lucide-react";
 import { toast } from "sonner";
+import AnimatedPage from "@/components/AnimatedPage";
 
 const courseData: Record<string, any> = {
   "devsecops-masterclass": {
@@ -69,8 +68,6 @@ const courseData: Record<string, any> = {
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const user = { name: "Rajesh" };
 
   const course = courseData[id || ""] || courseData["devsecops-masterclass"];
 
@@ -82,17 +79,11 @@ const CourseDetails = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-        showMenu
-        user={user}
-      />
+    <AnimatedPage>
+      <Header />
 
       <div className="flex flex-1">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-        <main className="flex-1 lg:ml-64">
+        <main className="flex-1">
           {/* Hero Banner */}
           <div className="bg-gradient-hero border-b">
             <div className="container p-6 py-12 space-y-4">
@@ -241,7 +232,7 @@ const CourseDetails = () => {
       </div>
 
       <Footer />
-    </div>
+    </AnimatedPage>
   );
 };
 

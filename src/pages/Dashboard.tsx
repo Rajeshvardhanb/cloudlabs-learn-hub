@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import CourseCard from "@/components/CourseCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Clock, Award } from "lucide-react";
+import Header from "@/components/Header";
+import AnimatedPage from "@/components/AnimatedPage";
 
 const activeCourses = [
   {
@@ -62,73 +64,76 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="container p-6 space-y-8">
-      {/* Welcome Section */}
-      <div className="rounded-2xl bg-gradient-hero p-8 shadow-card">
-        <h1 className="text-3xl font-heading font-bold mb-2">
-          Welcome back, {user?.name}! 👋
-        </h1>
-        <p className="text-muted-foreground">
-          Continue your learning journey and unlock new cloud skills
-        </p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground">In progress</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Learning Hours</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">34.5</div>
-            <p className="text-xs text-muted-foreground">This month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Certificates</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Earned</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Active Courses */}
-      <section>
-        <h2 className="text-2xl font-heading font-bold mb-4">Active Courses</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-          {activeCourses.map((course) => (
-            <CourseCard key={course.id} {...course} />
-          ))}
+    <AnimatedPage>
+      <Header />
+      <div className="container p-6 space-y-8">
+        {/* Welcome Section */}
+        <div className="rounded-2xl bg-gradient-hero p-8 shadow-card">
+          <h1 className="text-3xl font-heading font-bold mb-2">
+            Welcome back, {user?.name}! 👋
+          </h1>
+          <p className="text-muted-foreground">
+            Continue your learning journey and unlock new cloud skills
+          </p>
         </div>
-      </section>
 
-      {/* Recommended Courses */}
-      <section>
-        <h2 className="text-2xl font-heading font-bold mb-4">Recommended for You</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {recommendedCourses.map((course) => (
-            <CourseCard key={course.id} {...course} />
-          ))}
+        {/* Stats */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">2</div>
+              <p className="text-xs text-muted-foreground">In progress</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Learning Hours</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">34.5</div>
+              <p className="text-xs text-muted-foreground">This month</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Certificates</CardTitle>
+              <Award className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">3</div>
+              <p className="text-xs text-muted-foreground">Earned</p>
+            </CardContent>
+          </Card>
         </div>
-      </section>
-    </div>
+
+        {/* Active Courses */}
+        <section>
+          <h2 className="text-2xl font-heading font-bold mb-4">Active Courses</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            {activeCourses.map((course) => (
+              <CourseCard key={course.id} {...course} />
+            ))}
+          </div>
+        </section>
+
+        {/* Recommended Courses */}
+        <section>
+          <h2 className="text-2xl font-heading font-bold mb-4">Recommended for You</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {recommendedCourses.map((course) => (
+              <CourseCard key={course.id} {...course} />
+            ))}
+          </div>
+        </section>
+      </div>
+    </AnimatedPage>
   );
 };
 
