@@ -21,11 +21,20 @@ const CoursePlayer = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // In a real app, you would track the current lesson
-  const currentLesson = {
+  const [currentLesson, setCurrentLesson] = useState({
     moduleIndex: 0,
-    lessonIndex: 2,
-    title: "DevSecOps Tools Overview",
-    duration: "18:20",
+    lessonIndex: 0,
+  });
+
+  const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
+  const lessonTitle = typeof currentLessonData === 'string' ? currentLessonData : currentLessonData?.title || '';
+  const lessonDuration = typeof currentLessonData === 'string' ? '' : currentLessonData?.duration || '';
+  const videoUrl = typeof currentLessonData === 'string' ? '' : currentLessonData?.videoUrl || '';
+  
+  const getYoutubeEmbedUrl = (url: string) => {
+    if (!url) return '';
+    const videoId = url.split('/').pop()?.split('?')[0] || '';
+    return `https://www.youtube.com/embed/${videoId}`;
   };
 
   if (!course) {
@@ -43,21 +52,32 @@ const CoursePlayer = () => {
       <main className="flex-1 flex flex-col transition-all duration-300">
         <div className="flex-1 flex flex-col p-8 overflow-y-auto">
           {/* Video Player */}
-          <div className="relative aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-            <PlayCircle className="h-16 w-16 text-gray-500" />
-            <p className="absolute bottom-4 text-gray-400 text-sm">
-              Video Player Placeholder (YouTube unlisted video would be
-              embedded here)
-            </p>
+          <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
+            {videoUrl ? (
+              <iframe
+                src={getYoutubeEmbedUrl(videoUrl)}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={lessonTitle}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full">
+                <PlayCircle className="h-16 w-16 text-gray-500" />
+                <p className="text-gray-400 text-sm mt-4">
+                  No video available for this lesson
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Lesson Details */}
           <div className="mt-8 flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold">{currentLesson.title}</h1>
+              <h1 className="text-3xl font-bold">{lessonTitle}</h1>
               <p className="text-gray-500 mt-1">
                 Module {currentLesson.moduleIndex + 1} &bull; Lesson{" "}
-                {currentLesson.lessonIndex + 1} &bull; {currentLesson.duration}
+                {currentLesson.lessonIndex + 1} {lessonDuration && `• ${lessonDuration}`}
               </p>
             </div>
             <Button className="bg-blue-500 hover:bg-blue-600 text-white">
@@ -123,13 +143,19 @@ const CoursePlayer = () => {
                   <ul>
                     {module.lessons.map((lesson, lessonIndex) => {
                       const isCurrent = moduleIndex === currentLesson.moduleIndex && lessonIndex === currentLesson.lessonIndex;
+                      const lessonTitle = typeof lesson === 'string' ? lesson : lesson.title;
+                      const lessonDuration = typeof lesson === 'string' ? '12:30' : lesson.duration || '12:30';
                       return (
-                         <li key={lessonIndex} className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${isCurrent ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                         <li 
+                           key={lessonIndex} 
+                           onClick={() => setCurrentLesson({ moduleIndex, lessonIndex })}
+                           className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${isCurrent ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                         >
                            <div className="flex items-center">
                             {isCurrent ? <PlayCircle className="h-5 w-5 mr-3 text-blue-500" /> : <CheckCircle className="h-5 w-5 mr-3 text-gray-400" />}
-                            <span>{lesson}</span>
+                            <span>{lessonTitle}</span>
                            </div>
-                           <span className="text-sm text-gray-500">12:30</span>
+                           <span className="text-sm text-gray-500">{lessonDuration}</span>
                          </li>
                       )
                     })}
