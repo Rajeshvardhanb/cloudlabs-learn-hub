@@ -20,16 +20,16 @@ const Courses = () => {
   return (
     <AnimatedPage>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold">Course Catalog</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent animate-fade-in-down">Course Catalog</h1>
+        <p className="text-muted-foreground mt-3 text-lg animate-fade-in-up">
           Explore our comprehensive collection of cloud and security courses
         </p>
 
-        <div className="relative mt-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <div className="relative mt-6 animate-fade-in-up">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input 
             placeholder="Search courses..." 
-            className="pl-10" 
+            className="pl-12 h-12 rounded-xl shadow-card focus:shadow-hover transition-all duration-300 border-border/50" 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -51,27 +51,28 @@ const Courses = () => {
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => (
-            <Card key={course.id} className="flex flex-col overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="relative h-48 bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-4">
+            <Card key={course.id} className="flex flex-col overflow-hidden rounded-2xl shadow-card hover:shadow-elevated transition-all duration-500 border-border/50 group bg-gradient-card animate-scale-in">
+              <div className="relative h-48 bg-gradient-hero flex items-center justify-center p-4 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
                 {course.imageUrl ? (
-                  <img src={course.imageUrl} alt={course.title} className="h-24 w-24 object-contain" />
+                  <img src={course.imageUrl} alt={course.title} className="h-24 w-24 object-contain transition-transform group-hover:scale-110 duration-500 z-10" />
                 ) : (
-                  <span className="font-bold text-8xl text-gray-200 dark:text-gray-700">{course.category.charAt(0)}</span>
+                  <span className="font-bold text-8xl bg-gradient-primary bg-clip-text text-transparent opacity-20 group-hover:opacity-30 transition-opacity duration-300">{course.category.charAt(0)}</span>
                 )}
-                <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-semibold rounded-full ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+                <span className={`absolute top-3 right-3 px-3 py-1.5 text-xs font-semibold rounded-full shadow-md z-10 ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800 border border-green-200' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
                   {course.difficulty}
                 </span>
               </div>
-              <CardContent className="p-4 flex flex-col flex-grow">
-                <span className="text-xs font-semibold uppercase text-blue-500">{course.category}</span>
-                <h2 className="text-lg font-bold mt-2">{course.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground flex-grow">{course.description}</p>
+              <CardContent className="p-6 flex flex-col flex-grow">
+                <span className="text-xs font-semibold uppercase bg-gradient-primary bg-clip-text text-transparent">{course.category}</span>
+                <h2 className="text-xl font-bold mt-2 group-hover:text-primary transition-colors duration-300">{course.title}</h2>
+                <p className="mt-3 text-sm text-muted-foreground flex-grow leading-relaxed">{course.description}</p>
                 <div className="flex items-center mt-4 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4 mr-2" />
                   <span>{course.duration}</span>
                 </div>
-                <Link to={`/course/${course.id}`} className="mt-4 w-full">
-                  <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Details</Button>
+                <Link to={`/course/${course.id}`} className="mt-6 w-full">
+                  <Button className="w-full shadow-card hover:shadow-hover transition-all duration-300">View Details</Button>
                 </Link>
               </CardContent>
             </Card>
