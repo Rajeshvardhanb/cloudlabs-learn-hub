@@ -42,11 +42,11 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-accent text-accent-foreground">
+    <header className="sticky top-0 z-50 w-full bg-gradient-accent backdrop-blur-md shadow-elevated border-b border-border/10">
       <div className="container flex h-16 items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-3">
-          <Infinity className="h-8 w-8 text-white" />
-          <span className="text-lg font-bold tracking-wider text-white">
+        <Link to="/" className="flex items-center gap-3 group">
+          <Infinity className="h-8 w-8 text-accent-foreground transition-transform group-hover:rotate-180 duration-500" />
+          <span className="text-lg font-bold tracking-wider bg-gradient-primary bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
             INFINITY CLOUD LABS
           </span>
         </Link>
@@ -58,10 +58,10 @@ const Header = () => {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "flex items-center gap-2 py-2 text-sm font-medium transition-colors hover:text-white",
+                  "flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all duration-300 rounded-lg relative overflow-hidden group",
                   location.pathname.startsWith(link.to)
-                    ? "border-b-2 border-primary text-white"
-                    : "text-gray-400"
+                    ? "text-accent-foreground before:absolute before:bottom-0 before:left-0 before:w-full before:h-0.5 before:bg-gradient-primary"
+                    : "text-accent-foreground/60 hover:text-accent-foreground hover:bg-accent-foreground/5"
                 )}
               >
                 {link.icon && <link.icon className="h-4 w-4" />}
@@ -75,18 +75,18 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-10 w-10 rounded-full"
+                  className="relative h-10 w-10 rounded-full transition-transform hover:scale-105 duration-300"
                 >
-                  <Avatar className="h-10 w-10 border-2 border-primary/50">
+                  <Avatar className="h-10 w-10 border-2 border-primary shadow-glow">
                     <AvatarImage src={user.image} alt={user.name} />
-                    <AvatarFallback className="bg-primary font-bold text-primary-foreground">
+                    <AvatarFallback className="bg-gradient-primary font-bold text-primary-foreground">
                       {user.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-56 rounded-xl border-none bg-accent shadow-lg"
+                className="w-56 rounded-xl border border-border/20 bg-gradient-accent shadow-elevated backdrop-blur-xl"
                 align="end"
                 forceMount
               >
@@ -110,12 +110,12 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Link to="/auth">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  className="border-primary/50 text-accent-foreground hover:bg-primary hover:text-primary-foreground shadow-card hover:shadow-hover transition-all duration-300"
                 >
                   Login
                 </Button>
@@ -123,7 +123,7 @@ const Header = () => {
               <Link to="/auth">
                 <Button
                   size="sm"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="shadow-card hover:shadow-glow transition-all duration-300"
                 >
                   Get Started
                 </Button>
