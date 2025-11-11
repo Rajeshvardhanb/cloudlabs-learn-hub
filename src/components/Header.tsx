@@ -43,8 +43,8 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-gradient-accent backdrop-blur-md shadow-elevated border-b border-border/10">
-      <div className="container flex h-16 items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-3 group">
+      <div className="w-full flex h-16 items-center justify-between px-6">
+        <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-3 group">
           <Infinity className="h-8 w-8 text-accent-foreground transition-transform group-hover:rotate-180 duration-500" />
           <span className="text-lg font-bold tracking-wider bg-gradient-primary bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
             INFINITY CLOUD LABS

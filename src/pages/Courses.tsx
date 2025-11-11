@@ -4,18 +4,97 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { Clock, Search } from "lucide-react";
-import { useState } from "react";
-import { courseData } from "@/data/courseData";
+import { useState, useEffect } from "react";
+import { courseData, Course } from "@/data/courseData";
 
-const categories = ["All", "Learning Paths", "AWS", "DevSecOps", "Terraform", "Jenkins", "Kubernetes", "Docker", "Ansible"];
+const categories: Course['category'][] = [
+  "Learning Paths", "AWS", "Azure", "GCP", "Git", "Jenkins", "Ansible", "Docker", "Kubernetes", "Prometheus & Grafana", "ELK Stack", "Terraform", "Helm", "Argo CD"
+];
+const difficultyOrder = ["Beginner", "Intermediate", "Advanced"];
 
 const Courses = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState<Course['category'] | 'All'>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredCourses = courseData
-    .filter(course => selectedCategory === "All" || course.category === selectedCategory)
-    .filter(course => course.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const CourseCard = ({ course }: { course: Course }) => (
+    <Card key={course.id} className="flex flex-col overflow-hidden rounded-2xl shadow-card hover:shadow-elevated transition-all duration-500 border-border/50 group bg-gradient-card animate-scale-in">
+      <div className="relative h-48 bg-gradient-hero flex items-center justify-center p-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
+        <img src={course.imageUrl} alt={course.title} className="h-24 w-auto object-contain transition-transform group-hover:scale-110 duration-500 z-10" />
+        <span className={`absolute top-3 right-3 px-3 py-1.5 text-xs font-semibold rounded-full shadow-md z-10 ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800 border border-green-200' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
+          {course.difficulty}
+        </span>
+      </div>
+      <CardContent className="p-6 flex flex-col flex-grow">
+        <span className="text-xs font-semibold uppercase bg-gradient-primary bg-clip-text text-transparent">{course.category}</span>
+        <h2 className="text-xl font-bold mt-2 group-hover:text-primary transition-colors duration-300">{course.title}</h2>
+        <p className="mt-3 text-sm text-muted-foreground flex-grow leading-relaxed">{course.description}</p>
+        <div className="flex items-center mt-4 text-sm text-muted-foreground">
+          <Clock className="h-4 w-4 mr-2" />
+          <span>{course.duration}</span>
+        </div>
+        <div className="mt-6 w-full">
+            <Link to={`/course/${course.id}`} className="w-full">
+              <Button className="w-full shadow-card hover:shadow-hover transition-all duration-300">View Details</Button>
+            </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderContent = () => {
+    const filteredBySearch = courseData.filter(course => 
+        course.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (selectedCategory === "Learning Paths") {
+        const learningPathCourses = filteredBySearch.filter(course => course.category === "Learning Paths");
+        if (learningPathCourses.length === 0) {
+             return <p className="mt-8 text-center text-muted-foreground">No learning paths found.</p>;
+        }
+        return (
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {learningPathCourses.map(course => <CourseCard key={course.id} course={course} />)}
+            </div>
+        );
+    }
+
+    const coursesToGroup = selectedCategory === "All"
+      ? filteredBySearch.filter(course => course.category !== "Learning Paths")
+      : filteredBySearch.filter(course => course.category === selectedCategory);
+
+    const groupedByDifficulty = coursesToGroup.reduce((acc, course) => {
+      (acc[course.difficulty] = acc[course.difficulty] || []).push(course);
+      return acc;
+    }, {} as Record<Course['difficulty'], Course[]>);
+
+    const hasCourses = Object.values(groupedByDifficulty).some(group => group.length > 0);
+
+    if (!hasCourses) {
+        return <p className="mt-8 text-center text-muted-foreground">No courses available for this selection.</p>;
+    }
+
+    return (
+        <div className="space-y-12 mt-8">
+            {difficultyOrder.map(difficulty => {
+                const coursesInGroup = groupedByDifficulty[difficulty as Course['difficulty']];
+                if (coursesInGroup && coursesInGroup.length > 0) {
+                    return (
+                        <div key={difficulty}>
+                            <h2 className="text-2xl font-bold mb-4 text-primary">
+                                {selectedCategory === "All" ? difficulty : `${selectedCategory} - ${difficulty}`}
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {coursesInGroup.map(course => <CourseCard key={course.id} course={course} />)}
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
+            })}
+        </div>
+    );
+  };
 
   return (
     <AnimatedPage>
@@ -36,48 +115,16 @@ const Courses = () => {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          {categories.map(cat => (
-            <Button 
-              key={cat} 
-              variant={selectedCategory === cat ? 'default' : 'outline'}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </Button>
-          ))}
+            <Button key="All" variant={selectedCategory === 'All' ? 'default' : 'outline'} onClick={() => setSelectedCategory('All')}>All</Button>
+            {categories.map(cat => (
+                <Button key={cat} variant={selectedCategory === cat ? 'default' : 'outline'} onClick={() => setSelectedCategory(cat)}>
+                {cat}
+                </Button>
+            ))}
         </div>
+        
+        {renderContent()}
 
-        <p className="mt-8 text-sm text-muted-foreground">Showing {filteredCourses.length} courses</p>
-
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((course) => (
-            <Card key={course.id} className="flex flex-col overflow-hidden rounded-2xl shadow-card hover:shadow-elevated transition-all duration-500 border-border/50 group bg-gradient-card animate-scale-in">
-              <div className="relative h-48 bg-gradient-hero flex items-center justify-center p-4 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
-                {course.imageUrl ? (
-                  <img src={course.imageUrl} alt={course.title} className="h-24 w-24 object-contain transition-transform group-hover:scale-110 duration-500 z-10" />
-                ) : (
-                  <span className="font-bold text-8xl bg-gradient-primary bg-clip-text text-transparent opacity-20 group-hover:opacity-30 transition-opacity duration-300">{course.category.charAt(0)}</span>
-                )}
-                <span className={`absolute top-3 right-3 px-3 py-1.5 text-xs font-semibold rounded-full shadow-md z-10 ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800 border border-green-200' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
-                  {course.difficulty}
-                </span>
-              </div>
-              <CardContent className="p-6 flex flex-col flex-grow">
-                <span className="text-xs font-semibold uppercase bg-gradient-primary bg-clip-text text-transparent">{course.category}</span>
-                <h2 className="text-xl font-bold mt-2 group-hover:text-primary transition-colors duration-300">{course.title}</h2>
-                <p className="mt-3 text-sm text-muted-foreground flex-grow leading-relaxed">{course.description}</p>
-                <div className="flex items-center mt-4 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4 mr-2" />
-                  <span>{course.duration}</span>
-                </div>
-                <Link to={`/course/${course.id}`} className="mt-6 w-full">
-                  <Button className="w-full shadow-card hover:shadow-hover transition-all duration-300">View Details</Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
       </div>
     </AnimatedPage>
   );

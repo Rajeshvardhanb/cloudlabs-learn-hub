@@ -1,120 +1,196 @@
+import { useParams } from "react-router-dom";
+import { courseData, Course, Module, Lesson } from "@/data/courseData";
 import AnimatedPage from "@/components/AnimatedPage";
 import { Button } from "@/components/ui/button";
+import { Clock, User, CheckCircle, PlayCircle, ChevronDown, ChevronUp, BookOpen, Users, BarChart, ExternalLink, Video } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, User, CheckCircle, PlayCircle, FileText } from "lucide-react";
-import { useParams, Link, Navigate } from "react-router-dom";
-import { courseData } from "@/data/courseData";
+import { Card, CardContent } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "@/firebase";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const CourseDetails = () => {
-  const { id } = useParams<{ id: string }>();
-  const course = courseData.find(c => c.id === parseInt(id || ""));
+  const { id } = useParams();
+  const course: Course | undefined = courseData.find(c => c.id === Number(id));
+
+  const [user, setUser] = useState<{ uid?: string; name?: string; email?: string } | null>(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user && user.uid && course) {
+      const checkEnrollment = async () => {
+        try {
+          const enrollmentDoc = await getDoc(doc(db, "enrollments", `${user.uid}_${course.id}`));
+          setIsEnrolled(enrollmentDoc.exists());
+        } catch (error) {
+            console.warn("Could not verify enrollment status, you might be offline. Please try again later.")
+        }
+      };
+      checkEnrollment();
+    }
+  }, [user, course]);
+
+  const handleEnroll = async () => {
+    if (!user || !user.uid || !course) {
+      toast.error("You must be logged in to enroll.");
+      return;
+    }
+
+    const previousEnrollment = isEnrolled;
+    setIsEnrolled(true);
+    
+    try {
+      await setDoc(doc(db, "enrollments", `${user.uid}_${course.id}`), { courseId: course.id, userId: user.uid });
+      toast.success(`Successfully enrolled in ${course.title}!`);
+    } catch (error) {
+      console.error("Error enrolling: ", error);
+      toast.error("Enrollment failed. Please try again.");
+      setIsEnrolled(previousEnrollment);
+    }
+  };
 
   if (!course) {
-    return <Navigate to="/courses" />;
+    return <AnimatedPage><div className="text-center py-20">Course not found</div></AnimatedPage>;
   }
+
+  const totalLessons = course.modules.reduce((sum, module) => sum + module.lessons.length, 0);
 
   return (
     <AnimatedPage>
       <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="rounded-lg bg-blue-50 dark:bg-gray-800 p-8 mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            <span className="px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">{course.category}</span>
-            <span className={`px-3 py-1 text-sm font-semibold rounded-full ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
-                {course.difficulty}
-            </span>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{course.title}</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mt-2">{course.description}</p>
-          <div className="flex items-center gap-6 mt-4 text-gray-700 dark:text-gray-400">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              <span>{course.duration}</span>
+
+        {/* Header Section */}
+        <div className="bg-gradient-card p-8 rounded-2xl shadow-card mb-10 border-border/50 animate-fade-in-down">
+          <div className="flex flex-col md:flex-row md:items-start gap-8">
+            <div className="flex-grow">
+                <div className="flex items-center gap-4 mb-2">
+                    <span className="px-3 py-1.5 text-sm font-semibold rounded-full bg-secondary text-secondary-foreground border border-border">{course.category}</span>
+                    <span className="px-3 py-1.5 text-sm font-semibold rounded-full bg-secondary text-secondary-foreground border border-border">{course.difficulty}</span>
+                </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">{course.title}</h1>
+              <p className="mt-4 text-lg text-muted-foreground">{course.description}</p>
+              <div className="flex items-center flex-wrap gap-x-6 gap-y-2 mt-6 text-muted-foreground">
+                <div className="flex items-center gap-2"><Clock className="h-5 w-5 text-primary" /><span>{course.duration}</span></div>
+                <div className="flex items-center gap-2"><User className="h-5 w-5 text-primary" /><span>{course.instructor.name}</span></div>
+              </div>
+              <div className="mt-8">
+                {isEnrolled ? (
+                    <Link to={`/course/${course.id}/player`}>
+                        <Button size="lg" className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6">Start Learning</Button>
+                    </Link>
+                ) : (
+                    <Button size="lg" className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6" onClick={handleEnroll}>Enroll Now</Button>
+                )}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              <span>{course.instructor.name}</span>
+            <div className="w-full md:w-1/3 flex-shrink-0">
+              <img src={course.imageUrl} alt={course.title} className="w-full h-auto object-cover rounded-xl shadow-lg"/>
             </div>
           </div>
-          <Link to={`/course/${course.id}/player`}>
-            <Button size="lg" className="mt-6 bg-blue-500 hover:bg-blue-600 text-white">
-              <PlayCircle className="h-5 w-5 mr-2" />
-              Start Learning
-            </Button>
-          </Link>
         </div>
 
-        {/* Tabs Section */}
-        <Tabs defaultValue="modules" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="modules">Modules</TabsTrigger>
-            <TabsTrigger value="resources">Resources</TabsTrigger>
-            <TabsTrigger value="instructor">Instructor</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="mt-6 p-6 border rounded-lg">
-            <h2 className="text-2xl font-bold">What You'll Learn</h2>
-            <ul className="mt-4 space-y-2">
-              {course.whatYouWillLearn.map((item, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-1 flex-shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </TabsContent>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-          <TabsContent value="modules" className="mt-6">
-             <Accordion type="single" collapsible defaultValue="item-0">
+          {/* Main Content: Modules & Instructor */}
+          <div className="lg:col-span-2">
+            {/* What you will learn */}
+            <div className="bg-gradient-card p-6 rounded-2xl shadow-card mb-8 border-border/50">
+                <h2 className="text-2xl font-bold mb-4 flex items-center"><CheckCircle className="h-6 w-6 mr-3 text-primary"/>What You'll Learn</h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-muted-foreground">
+                    {course.whatYouWillLearn.map((point, i) => (
+                        <li key={i} className="flex items-start"><CheckCircle className="h-4 w-4 mr-2 mt-1 text-green-500 flex-shrink-0"/><span>{point}</span></li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* Modules Section */}
+            <div>
+              <h2 className="text-3xl font-bold mb-4"><BookOpen className="h-8 w-8 inline-block mr-3 text-primary"/>Course Content</h2>
+              <Accordion type="single" collapsible className="w-full bg-gradient-card rounded-2xl shadow-card border-border/50 p-2">
                 {course.modules.map((module, index) => (
-                <AccordionItem value={`item-${index}`} key={index} className="border rounded-lg mb-2">
-                    <AccordionTrigger className="px-6 py-4 text-lg font-semibold hover:no-underline">
-                    {module.title}
+                  <AccordionItem value={`item-${index}`} key={index} className="border-b-border/50">
+                    <AccordionTrigger className="hover:no-underline p-4">
+                      <div className="flex-grow text-left">
+                        <h3 className="font-semibold text-lg">{module.title}</h3>
+                        <span className="text-sm text-muted-foreground">{module.lessons.length} lessons</span>
+                      </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-4">
+                    <AccordionContent className="p-4 pt-0">
                       <ul className="space-y-3">
-                        {module.lessons.length > 0 ? module.lessons.map((lesson, lessonIndex) => (
-                           <li key={lessonIndex} className="flex items-center text-gray-600 dark:text-gray-300">
-                             <PlayCircle className="h-5 w-5 text-gray-400 mr-3" />
-                             <span>{typeof lesson === 'string' ? lesson : lesson.title}</span>
-                           </li>
-                        )) : <p className="text-gray-500">Lessons for this module will be available soon.</p>}
+                        {module.lessons.map((lesson, lessonIndex) => (
+                          <li key={lessonIndex} className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
+                            <PlayCircle className="h-5 w-5 mr-3 text-primary"/> 
+                            <span>{lesson.title}</span>
+                            <span className="ml-auto text-xs">{lesson.duration}</span>
+                          </li>
+                        ))}
                       </ul>
                     </AccordionContent>
-                </AccordionItem>
+                  </AccordionItem>
                 ))}
-            </Accordion>
-          </TabsContent>
+              </Accordion>
+            </div>
 
-          <TabsContent value="resources" className="mt-6 p-6 border rounded-lg">
-            <h2 className="text-2xl font-bold">Resources</h2>
-             <ul className="mt-4 space-y-2">
-                {course.resources.map((resource, index) => (
-                  <li key={index}>
-                    <a href={resource.link} className="flex items-center text-blue-500 hover:underline">
-                      <FileText className="h-5 w-5 mr-3" />
-                      <span>{resource.title}</span>
-                    </a>
-                  </li>
-                ))}
-             </ul>
-          </TabsContent>
+            {/* Instructor Section */}
+            <div className="mt-12">
+                <h2 className="text-3xl font-bold mb-4"><Users className="h-8 w-8 inline-block mr-3 text-primary"/>Instructor</h2>
+                <Card className="bg-gradient-card p-6 rounded-2xl shadow-card border-border/50">
+                    <CardContent className="flex items-center gap-6 p-0">
+                        <div className="h-24 w-24 rounded-full bg-primary-foreground flex items-center justify-center text-4xl font-bold text-primary shadow-inner">{course.instructor.avatar}</div>
+                        <div>
+                            <h3 className="text-2xl font-bold">{course.instructor.name}</h3>
+                            <p className="text-md text-primary font-semibold">{course.instructor.title}</p>
+                            <p className="text-sm text-muted-foreground mt-2">{course.instructor.bio}</p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+          </div>
 
-          <TabsContent value="instructor" className="mt-6 p-6 border rounded-lg">
-             <div className="flex items-start gap-6">
-                <div className="h-20 w-20 rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl font-bold">
-                    {course.instructor.avatar}
-                </div>
-                <div>
-                    <h2 className="text-2xl font-bold">{course.instructor.name}</h2>
-                    <p className="text-md text-gray-500">{course.instructor.title}</p>
-                    <p className="mt-4 text-gray-600 dark:text-gray-300">{course.instructor.bio}</p>
-                </div>
-             </div>
-          </TabsContent>
-        </Tabs>
+          {/* Sidebar: Course Stats & Resources */}
+          <div className="lg:col-span-1 space-y-8">
+            <Card className="bg-gradient-card p-6 rounded-2xl shadow-card border-border/50">
+                <CardContent className="p-0">
+                    <h3 className="text-xl font-bold mb-4">Course Stats</h3>
+                    <ul className="space-y-3 text-muted-foreground">
+                        <li className="flex items-center justify-between"><span className="flex items-center"><BarChart className="h-5 w-5 mr-2 text-primary"/>Difficulty</span> <strong>{course.difficulty}</strong></li>
+                        <li className="flex items-center justify-between"><span className="flex items-center"><Video className="h-5 w-5 mr-2 text-primary"/>Total Lessons</span> <strong>{totalLessons}</strong></li>
+                        <li className="flex items-center justify-between"><span className="flex items-center"><Clock className="h-5 w-5 mr-2 text-primary"/>Duration</span> <strong>{course.duration}</strong></li>
+                    </ul>
+                </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card p-6 rounded-2xl shadow-card border-border/50">
+                <CardContent className="p-0">
+                    <h3 className="text-xl font-bold mb-4">Resources</h3>
+                    {course.resources.length > 0 ? (
+                        <ul className="space-y-3">
+                            {course.resources.map((resource, index) => (
+                                <li key={index}>
+                                    <a href={resource.link} target="_blank" rel="noopener noreferrer" className="flex items-center text-muted-foreground hover:text-primary group">
+                                        <ExternalLink className="h-4 w-4 mr-2 text-primary/80 group-hover:text-primary"/>
+                                        <span>{resource.title}</span>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No resources available for this course.</p>
+                    )}
+                </CardContent>
+            </Card>
+          </div>
+        </div>
+
       </div>
     </AnimatedPage>
   );
