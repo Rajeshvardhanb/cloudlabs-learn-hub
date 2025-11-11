@@ -4,14 +4,69 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { Clock, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { courseData } from "@/data/courseData";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "@/firebase";
+import { toast } from "sonner";
 
 const categories = ["All", "Learning Paths", "AWS", "DevSecOps", "Terraform", "Jenkins", "Kubernetes", "Docker", "Ansible"];
 
 const Courses = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [enrolledCourses, setEnrolledCourses] = useState<number[]>([]);
+  const [user, setUser] = useState<{ uid?: string; name?: string; email?: string } | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user && user.uid) {
+      const fetchEnrolledCourses = async () => {
+        const enrolled = [];
+        for (const course of courseData) {
+          try {
+            const enrollmentDoc = await getDoc(doc(db, "enrollments", `${user.uid}_${course.id}`));
+            if (enrollmentDoc.exists()) {
+              enrolled.push(course.id);
+            }
+          } catch (error) {
+            console.warn("Error fetching enrollment status, you might be offline:", error);
+          }
+        }
+        setEnrolledCourses(enrolled);
+      };
+      fetchEnrolledCourses();
+    }
+  }, [user]);
+
+  const handleEnroll = async (courseId: number) => {
+    if (!user || !user.uid) {
+      toast.error("You must be logged in to enroll.");
+      // Consider navigating to login page
+      return;
+    }
+
+    // Optimistic UI update
+    const previousEnrolledCourses = [...enrolledCourses];
+    setEnrolledCourses([...previousEnrolledCourses, courseId]);
+
+    try {
+      // Asynchronous database operation
+      await setDoc(doc(db, "enrollments", `${user.uid}_${courseId}`), { courseId, userId: user.uid });
+      toast.success(`Successfully enrolled in ${courseData.find(c=>c.id === courseId)?.title}!`);
+    } catch (error) {
+      console.error("Error enrolling in course, rolling back UI: ", error);
+      toast.error("Enrollment failed. Please check your connection and try again.");
+      // If it fails, revert the UI change.
+      setEnrolledCourses(previousEnrolledCourses);
+    }
+  };
 
   const filteredCourses = courseData
     .filter(course => selectedCategory === "All" || course.category === selectedCategory)
@@ -71,9 +126,20 @@ const Courses = () => {
                   <Clock className="h-4 w-4 mr-2" />
                   <span>{course.duration}</span>
                 </div>
-                <Link to={`/course/${course.id}`} className="mt-6 w-full">
-                  <Button className="w-full shadow-card hover:shadow-hover transition-all duration-300">View Details</Button>
-                </Link>
+                 <div className="mt-6 w-full">
+                    {enrolledCourses.includes(course.id) ? (
+                        <Link to={`/course/${course.id}/player`} className="w-full">
+                        <Button className="w-full shadow-card hover:shadow-hover transition-all duration-300">Start Learning</Button>
+                        </Link>
+                    ) : (
+                        <Button 
+                          className="w-full shadow-card hover:shadow-hover transition-all duration-300"
+                          onClick={() => handleEnroll(course.id)}
+                        >
+                          Enroll Now
+                        </Button>
+                    )}
+                </div>
               </CardContent>
             </Card>
           ))}

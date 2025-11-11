@@ -31,6 +31,7 @@ const Auth = () => {
       localStorage.setItem(
         "user",
         JSON.stringify({
+          uid: user.uid, // Add this line
           name: user.displayName || user.email, // Fallback to email
           email: user.email,
           image: user.photoURL || "", // Fallback to empty string
@@ -53,6 +54,7 @@ const Auth = () => {
       localStorage.setItem(
         "user",
         JSON.stringify({
+          uid: user.uid, // Add this line
           name: user.displayName || user.email, // Fallback to email
           email: user.email,
           image: user.photoURL || "", // Fallback to empty string

@@ -21,7 +21,7 @@ const recommendedCourses = courseData.filter(c => [3, 4, 5].includes(c.id));
 const Dashboard = () => {
   return (
     <AnimatedPage>
-      <div className="container mx-auto px-4 py-8">
+      <div className="px-4 py-8">
         {/* Welcome Header */}
         <div className="rounded-2xl bg-gradient-hero backdrop-blur-sm border border-border/50 p-8 mb-8 shadow-card hover:shadow-hover transition-all duration-300 animate-fade-in-down">
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">Welcome back, {user.name}! 👋</h1>

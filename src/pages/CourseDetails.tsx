@@ -3,16 +3,63 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, User, CheckCircle, PlayCircle, FileText } from "lucide-react";
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, Link, Navigate, useNavigate } from "react-router-dom";
 import { courseData } from "@/data/courseData";
+import { useEffect, useState } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const course = courseData.find(c => c.id === parseInt(id || ""));
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<{ uid?: string; name?: string; email?: string } | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (course && user && user.uid) {
+      setIsLoading(true);
+      const checkEnrollment = async () => {
+        try {
+            const enrollmentDoc = await getDoc(doc(db, "enrollments", `${user.uid}_${course.id}`));
+            setIsEnrolled(enrollmentDoc.exists());
+        } catch (error) {
+            console.error("Error checking enrollment:", error);
+        } finally {
+            setIsLoading(false);
+        }
+      };
+      checkEnrollment();
+    }
+  }, [course, user]);
 
   if (!course) {
     return <Navigate to="/courses" />;
   }
+
+  const handleEnroll = async () => {
+    if (!user || !user.uid) {
+      navigate("/auth");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await setDoc(doc(db, "enrollments", `${user.uid}_${course.id}`), { courseId: course.id, userId: user.uid });
+      setIsEnrolled(true);
+    } catch (error) {
+      console.error("Error enrolling in course: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <AnimatedPage>
@@ -37,16 +84,22 @@ const CourseDetails = () => {
               <span>{course.instructor.name}</span>
             </div>
           </div>
-          <Link to={`/course/${course.id}/player`}>
-            <Button size="lg" className="mt-6 bg-blue-500 hover:bg-blue-600 text-white">
-              <PlayCircle className="h-5 w-5 mr-2" />
-              Start Learning
+          {isEnrolled ? (
+            <Link to={`/course/${course.id}/player`}>
+              <Button size="lg" className="mt-6 bg-blue-500 hover:bg-blue-600 text-white">
+                <PlayCircle className="h-5 w-5 mr-2" />
+                Start Learning
+              </Button>
+            </Link>
+          ) : (
+            <Button size="lg" className="mt-6 bg-blue-500 hover:bg-blue-600 text-white" onClick={handleEnroll} disabled={isLoading}>
+              {isLoading ? 'Enrolling...' : 'Enroll Now'}
             </Button>
-          </Link>
+          )}
         </div>
 
         {/* Tabs Section */}
-        <Tabs defaultValue="modules" className="w-full">
+        <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="modules">Modules</TabsTrigger>
