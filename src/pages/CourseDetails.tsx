@@ -8,13 +8,14 @@ import { courseData } from "@/data/courseData";
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import { toast } from "sonner";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const course = courseData.find(c => c.id === parseInt(id || ""));
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with loading true
   const [user, setUser] = useState<{ uid?: string; name?: string; email?: string } | null>(null);
 
   useEffect(() => {
@@ -26,18 +27,21 @@ const CourseDetails = () => {
 
   useEffect(() => {
     if (course && user && user.uid) {
-      setIsLoading(true);
       const checkEnrollment = async () => {
+        setIsLoading(true);
         try {
-            const enrollmentDoc = await getDoc(doc(db, "enrollments", `${user.uid}_${course.id}`));
-            setIsEnrolled(enrollmentDoc.exists());
+          const enrollmentDoc = await getDoc(doc(db, "enrollments", `${user.uid}_${course.id}`));
+          setIsEnrolled(enrollmentDoc.exists());
         } catch (error) {
-            console.error("Error checking enrollment:", error);
+          console.error("Error checking enrollment:", error);
+          toast.error("Could not verify enrollment. You may be offline.");
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
       };
       checkEnrollment();
+    } else {
+      setIsLoading(false);
     }
   }, [course, user]);
 
@@ -47,17 +51,23 @@ const CourseDetails = () => {
 
   const handleEnroll = async () => {
     if (!user || !user.uid) {
+      toast.error("You must be logged in to enroll.");
       navigate("/auth");
       return;
     }
-    setIsLoading(true);
+
+    // Optimistic UI update
+    const previousEnrollmentState = isEnrolled;
+    setIsEnrolled(true);
+
     try {
       await setDoc(doc(db, "enrollments", `${user.uid}_${course.id}`), { courseId: course.id, userId: user.uid });
-      setIsEnrolled(true);
+      toast.success(`Successfully enrolled in ${course.title}!`);
     } catch (error) {
-      console.error("Error enrolling in course: ", error);
-    } finally {
-      setIsLoading(false);
+      console.error("Error enrolling in course, rolling back UI: ", error);
+      toast.error("Enrollment failed. Please check your connection and try again.");
+      // If it fails, revert the UI change.
+      setIsEnrolled(previousEnrollmentState);
     }
   };
 
@@ -93,7 +103,7 @@ const CourseDetails = () => {
             </Link>
           ) : (
             <Button size="lg" className="mt-6 bg-blue-500 hover:bg-blue-600 text-white" onClick={handleEnroll} disabled={isLoading}>
-              {isLoading ? 'Enrolling...' : 'Enroll Now'}
+              {isLoading ? 'Loading...' : 'Enroll Now'}
             </Button>
           )}
         </div>
