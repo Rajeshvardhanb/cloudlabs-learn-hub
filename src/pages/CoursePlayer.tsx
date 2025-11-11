@@ -10,36 +10,78 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { courseData } from "@/data/courseData";
+import { courseData, Lesson } from "@/data/courseData";
 import { useParams, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { doc, getDoc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { db } from "@/firebase";
+import { toast } from "sonner";
 
 const CoursePlayer = () => {
   const { id } = useParams<{ id: string }>();
   const course = courseData.find((c) => c.id === parseInt(id || ""));
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [user, setUser] = useState<{ uid?: string; name?: string; email?: string } | null>(null);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [currentLesson, setCurrentLesson] = useState<{ moduleIndex: number; lessonIndex: number }>({ moduleIndex: 0, lessonIndex: 0 });
 
-  // In a real app, you would track the current lesson
-  const [currentLesson, setCurrentLesson] = useState({
-    moduleIndex: 0,
-    lessonIndex: 0,
-  });
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
-  const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
-  const lessonTitle = typeof currentLessonData === 'string' ? currentLessonData : currentLessonData?.title || '';
-  const lessonDuration = typeof currentLessonData === 'string' ? '' : currentLessonData?.duration || '';
-  const videoUrl = typeof currentLessonData === 'string' ? '' : currentLessonData?.videoUrl || '';
-  
-  const getYoutubeEmbedUrl = (url: string) => {
-    if (!url) return '';
-    const videoId = url.split('/').pop()?.split('?')[0] || '';
-    return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3&controls=0&disablekb=1&fs=0&showinfo=0`;
+  useEffect(() => {
+    if (user && user.uid && course) {
+      const fetchEnrollment = async () => {
+        const enrollmentDocRef = doc(db, "enrollments", `${user.uid}_${course.id}`);
+        const enrollmentDoc = await getDoc(enrollmentDocRef);
+        if (enrollmentDoc.exists()) {
+          setCompletedLessons(enrollmentDoc.data().completedLessons || []);
+        }
+      };
+      fetchEnrollment();
+    }
+  }, [user, course]);
+
+  const handleMarkComplete = async () => {
+    if (!user || !user.uid || !course) return;
+
+    const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
+    if (!currentLessonData || completedLessons.includes(currentLessonData.id)) return;
+
+    const newCompletedLessons = [...completedLessons, currentLessonData.id];
+    setCompletedLessons(newCompletedLessons);
+
+    const enrollmentDocRef = doc(db, "enrollments", `${user.uid}_${course.id}`);
+
+    try {
+      await updateDoc(enrollmentDocRef, { 
+        completedLessons: arrayUnion(currentLessonData.id)
+      });
+      toast.success("Lesson marked as complete!");
+    } catch (error) {
+        // Fallback to setDoc if the document doesn't exist yet, which can happen with optimistic UI.
+        await setDoc(enrollmentDocRef, { completedLessons: [currentLessonData.id], userId: user.uid, courseId: course.id }, { merge: true });
+        toast.success("Lesson marked as complete!");
+    }
   };
 
   if (!course) {
     return <Navigate to="/courses" />;
   }
+  
+  const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
+  const { title: lessonTitle, duration: lessonDuration, videoUrl } = currentLessonData;
+  const isCompleted = completedLessons.includes(currentLessonData.id);
+
+  const getYoutubeEmbedUrl = (url: string) => {
+    if (!url) return '';
+    const videoId = url.split('/').pop()?.split('?')[0] || '';
+    return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3&controls=0&disablekb=1&fs=0&showinfo=0`;
+  };
 
   const sidebarVariants = {
     open: { width: 350, x: 0 },
@@ -83,9 +125,13 @@ const CoursePlayer = () => {
                 {currentLesson.lessonIndex + 1} {lessonDuration && `• ${lessonDuration}`}
               </p>
             </div>
-            <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+            <Button 
+              className={`${isCompleted ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
+              onClick={handleMarkComplete}
+              disabled={isCompleted}
+            >
               <CheckCircle className="h-5 w-5 mr-2" />
-              Mark Complete
+              {isCompleted ? 'Completed' : 'Mark Complete'}
             </Button>
           </div>
 
@@ -146,19 +192,18 @@ const CoursePlayer = () => {
                   <ul>
                     {module.lessons.map((lesson, lessonIndex) => {
                       const isCurrent = moduleIndex === currentLesson.moduleIndex && lessonIndex === currentLesson.lessonIndex;
-                      const lessonTitle = typeof lesson === 'string' ? lesson : lesson.title;
-                      const lessonDuration = typeof lesson === 'string' ? '12:30' : lesson.duration || '12:30';
+                      const isLessonCompleted = completedLessons.includes(lesson.id);
                       return (
                          <li 
-                           key={lessonIndex} 
+                           key={lesson.id} 
                            onClick={() => setCurrentLesson({ moduleIndex, lessonIndex })}
                            className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${isCurrent ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                          >
                            <div className="flex items-center">
-                            {isCurrent ? <PlayCircle className="h-5 w-5 mr-3 text-blue-500" /> : <CheckCircle className="h-5 w-5 mr-3 text-gray-400" />}
-                            <span>{lessonTitle}</span>
+                            {isLessonCompleted ? <CheckCircle className="h-5 w-5 mr-3 text-green-500" /> : <PlayCircle className="h-5 w-5 mr-3 text-gray-400" />}
+                            <span>{lesson.title}</span>
                            </div>
-                           <span className="text-sm text-gray-500">{lessonDuration}</span>
+                           {lesson.duration && <span className="text-sm text-gray-500">{lesson.duration}</span>}
                          </li>
                       )
                     })}
