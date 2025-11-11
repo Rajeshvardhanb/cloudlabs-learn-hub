@@ -34,7 +34,7 @@ const CoursePlayer = () => {
   const getYoutubeEmbedUrl = (url: string) => {
     if (!url) return '';
     const videoId = url.split('/').pop()?.split('?')[0] || '';
-    return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3`;
+    return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3&controls=0&disablekb=1&fs=0&showinfo=0`;
   };
 
   if (!course) {
@@ -52,14 +52,17 @@ const CoursePlayer = () => {
       <main className="flex-1 flex flex-col transition-all duration-300">
         <div className="flex-1 flex flex-col p-8 overflow-y-auto">
           {/* Video Player */}
-          <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
+          <div 
+            className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden"
+            onContextMenu={(e) => e.preventDefault()}
+          >
             {videoUrl ? (
               <iframe
                 src={getYoutubeEmbedUrl(videoUrl)}
-                className="w-full h-full"
+                className="w-full h-full pointer-events-auto"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
                 title={lessonTitle}
+                style={{ pointerEvents: 'auto' }}
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-full">
