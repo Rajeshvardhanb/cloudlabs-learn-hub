@@ -1,13 +1,15 @@
-import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Cloud, Lock, Mail } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
+import Wave from "@/components/ui/wave";
+import { useState } from "react";
+import AnimatedPage from "@/components/AnimatedPage";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/firebase";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -16,211 +18,148 @@ const Auth = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate Firebase auth
-    setTimeout(() => {
+    const email = (e.target as any).email.value;
+    const password = (e.target as any).password.value;
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          uid: user.uid, // Add this line
+          name: user.displayName || user.email, // Fallback to email
+          email: user.email,
+          image: user.photoURL || "", // Fallback to empty string
+        })
+      );
       toast.success("Login successful!");
       navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
-  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    
-    // Simulate Firebase auth
-    setTimeout(() => {
-      toast.success("Account created! Welcome aboard!");
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          uid: user.uid, // Add this line
+          name: user.displayName || user.email, // Fallback to email
+          email: user.email,
+          image: user.photoURL || "", // Fallback to empty string
+        })
+      );
+      toast.success("Signed in with Google successfully!");
       navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
-      {/* Hero Section */}
-      <div className="relative hidden lg:flex flex-col justify-center p-12 bg-gradient-hero border-r">
-        <div className="max-w-lg space-y-6">
-          <img src={logo} alt="INFINITELY CLOUD LABS" className="h-16 w-auto mb-8" />
-          
-          <h1 className="text-4xl font-heading font-bold leading-tight">
-            Learn. Build. Secure the Cloud.
-          </h1>
-          
-          <p className="text-lg text-muted-foreground">
-            Join thousands of students mastering AWS and DevSecOps with expert-led online training.
-          </p>
-
-          <div className="space-y-4 pt-8">
-            <div className="flex items-start gap-4">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <Cloud className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Industry-Leading Curriculum</h3>
-                <p className="text-sm text-muted-foreground">
-                  Learn from AWS experts and security professionals
-                </p>
-              </div>
+    <AnimatedPage>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
+          <div className="hidden lg:flex flex-col items-center justify-center bg-white p-12 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full bg-grid-black/[0.05] z-0"></div>
+            <div className="z-10 text-center">
+              <img
+                src={logo}
+                alt="Infinity Cloud Labs Logo"
+                className="w-96 h-96 mx-auto mb-6"
+              />
+              <h1 className="text-5xl font-heading font-extrabold tracking-tight text-gray-800">
+                INFINITY CLOUD LABS
+              </h1>
+              <p className="mt-4 text-lg text-gray-500">
+                The future of cloud learning, today.
+              </p>
             </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <Lock className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Hands-On Projects</h3>
-                <p className="text-sm text-muted-foreground">
-                  Build real-world cloud infrastructure and security pipelines
-                </p>
-              </div>
+            <div className="absolute bottom-0 left-0 w-full">
+              <Wave />
             </div>
           </div>
-        </div>
 
-        <div className="absolute bottom-8 left-12 text-sm text-muted-foreground">
-          Powered by Firebase Authentication
-        </div>
-      </div>
+          <div className="flex items-center justify-center p-8 bg-gray-50">
+            <div className="w-full max-w-sm">
+              <div className="bg-white p-8 rounded-xl shadow-2xl">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-gray-800">Sign In</h1>
+                  <p className="text-gray-500 mt-2">
+                    Welcome back! Please enter your credentials.
+                  </p>
+                </div>
 
-      {/* Auth Forms */}
-      <div className="flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-6">
-          <div className="text-center lg:hidden mb-8">
-            <img src={logo} alt="INFINITELY CLOUD LABS" className="h-12 w-auto mx-auto mb-4" />
-          </div>
+                <form onSubmit={handleLogin} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="rajesh@example.com"
+                      required
+                      className="bg-gray-100 border-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
 
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Welcome Back</CardTitle>
-                  <CardDescription>
-                    Enter your credentials to access your account
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="login-email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="login-email"
-                          type="email"
-                          placeholder="your@email.com"
-                          className="pl-9"
-                          required
-                        />
-                      </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password">Password</Label>
+                      <a
+                        href="#"
+                        className="text-sm text-blue-500 hover:underline"
+                      >
+                        Forgot password?
+                      </a>
                     </div>
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      defaultValue="password"
+                      className="bg-gray-100 border-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="login-password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="login-password"
-                          type="password"
-                          placeholder="••••••••"
-                          className="pl-9"
-                          required
-                        />
-                      </div>
-                    </div>
-
+                  <div>
                     <Button
-                      type="button"
-                      variant="link"
-                      className="h-auto p-0 text-sm"
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white hover:scale-105 transition-transform duration-300"
+                      disabled={isLoading}
                     >
-                      Forgot password?
-                    </Button>
-
-                    <Button type="submit" className="w-full" disabled={isLoading}>
                       {isLoading ? "Signing in..." : "Sign In"}
                     </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  </div>
+                </form>
 
-            <TabsContent value="signup">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Create Account</CardTitle>
-                  <CardDescription>
-                    Start your cloud learning journey today
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSignup} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-name">Full Name</Label>
-                      <Input
-                        id="signup-name"
-                        type="text"
-                        placeholder="Rajesh Kumar"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="signup-email"
-                          type="email"
-                          placeholder="your@email.com"
-                          className="pl-9"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="signup-password"
-                          type="password"
-                          placeholder="••••••••"
-                          className="pl-9"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? "Creating account..." : "Create Account"}
-                    </Button>
-
-                    <p className="text-xs text-center text-muted-foreground">
-                      By signing up, you agree to our Terms of Service and Privacy Policy
-                    </p>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
-          <p className="text-center text-sm text-muted-foreground">
-            Need help? Contact{" "}
-            <a href="mailto:support@infinitelycloudlabs.com" className="text-primary hover:underline">
-              support@infinitelycloudlabs.com
-            </a>
-          </p>
+                <div className="mt-6">
+                  <Button
+                    onClick={handleGoogleSignIn}
+                    className="w-full bg-red-500 text-white hover:bg-red-600"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Signing in..." : "Sign in with Google"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </AnimatedPage>
   );
 };
 

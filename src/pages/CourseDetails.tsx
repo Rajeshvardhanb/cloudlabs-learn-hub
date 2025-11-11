@@ -1,247 +1,198 @@
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import Footer from "@/components/Footer";
+import { useParams } from "react-router-dom";
+import { courseData, Course, Module, Lesson } from "@/data/courseData";
+import AnimatedPage from "@/components/AnimatedPage";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Clock, User, CheckCircle, PlayCircle, ChevronDown, ChevronUp, BookOpen, Users, BarChart, ExternalLink, Video } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Clock, Signal, PlayCircle, FileText, Github, User } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 import { toast } from "sonner";
-
-const courseData: Record<string, any> = {
-  "devsecops-masterclass": {
-    title: "DevSecOps Masterclass — Secure CI/CD",
-    description: "Build secure continuous integration and deployment pipelines with industry-standard tools and practices.",
-    duration: "35 hours",
-    difficulty: "Intermediate",
-    category: "DevSecOps",
-    instructor: "Krishna R",
-    instructorTitle: "Cloud Security Engineer",
-    modules: [
-      {
-        title: "Module 1: Introduction to DevSecOps",
-        lessons: [
-          "Understanding DevSecOps Culture",
-          "Security in the Software Development Lifecycle",
-          "DevSecOps Tools Overview",
-          "Setting Up Your Lab Environment",
-        ],
-      },
-      {
-        title: "Module 2: Secure CI/CD Pipelines",
-        lessons: [
-          "Pipeline Security Fundamentals",
-          "Integrating Security Scanning",
-          "Secret Management in Pipelines",
-          "Automated Security Testing",
-        ],
-      },
-      {
-        title: "Module 3: Container Security",
-        lessons: [
-          "Docker Security Best Practices",
-          "Image Scanning and Vulnerability Management",
-          "Runtime Security Monitoring",
-          "Kubernetes Security Hardening",
-        ],
-      },
-      {
-        title: "Module 4: Infrastructure Security",
-        lessons: [
-          "Infrastructure as Code Security",
-          "Policy as Code with OPA",
-          "Cloud Security Posture Management",
-          "Compliance Automation",
-        ],
-      },
-    ],
-    resources: [
-      { name: "DevSecOps Checklist", type: "pdf", url: "#" },
-      { name: "Sample Security Policies", type: "github", url: "#" },
-      { name: "Tool Configuration Files", type: "github", url: "#" },
-    ],
-  },
-};
+import { Link } from "react-router-dom";
 
 const CourseDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const user = { name: "Rajesh" };
+  const course: Course | undefined = courseData.find(c => c.id === Number(id));
 
-  const course = courseData[id || ""] || courseData["devsecops-masterclass"];
+  const [user, setUser] = useState<{ uid?: string; name?: string; email?: string } | null>(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
-  const handleEnroll = () => {
-    toast.success("Enrolled successfully! Starting your first lesson...");
-    setTimeout(() => {
-      navigate(`/player/${id}`);
-    }, 1500);
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user && user.uid && course) {
+      const checkEnrollment = async () => {
+        try {
+          const enrollmentDoc = await getDoc(doc(db, "enrollments", `${user.uid}_${course.id}`));
+          setIsEnrolled(enrollmentDoc.exists());
+        } catch (error) {
+            console.warn("Could not verify enrollment status, you might be offline. Please try again later.")
+        }
+      };
+      checkEnrollment();
+    }
+  }, [user, course]);
+
+  const handleEnroll = async () => {
+    if (!user || !user.uid || !course) {
+      toast.error("You must be logged in to enroll.");
+      return;
+    }
+
+    const previousEnrollment = isEnrolled;
+    setIsEnrolled(true);
+    
+    try {
+      await setDoc(doc(db, "enrollments", `${user.uid}_${course.id}`), { courseId: course.id, userId: user.uid });
+      toast.success(`Successfully enrolled in ${course.title}!`);
+    } catch (error) {
+      console.error("Error enrolling: ", error);
+      toast.error("Enrollment failed. Please try again.");
+      setIsEnrolled(previousEnrollment);
+    }
   };
 
+  if (!course) {
+    return <AnimatedPage><div className="text-center py-20">Course not found</div></AnimatedPage>;
+  }
+
+  const totalLessons = course.modules.reduce((sum, module) => sum + module.lessons.length, 0);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-        showMenu
-        user={user}
-      />
+    <AnimatedPage>
+      <div className="container mx-auto px-4 py-8">
 
-      <div className="flex flex-1">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-        <main className="flex-1 lg:ml-64">
-          {/* Hero Banner */}
-          <div className="bg-gradient-hero border-b">
-            <div className="container p-6 py-12 space-y-4">
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">{course.category}</Badge>
-                <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
-                  <Signal className="mr-1 h-3 w-3" />
-                  {course.difficulty}
-                </Badge>
-              </div>
-
-              <h1 className="text-4xl font-heading font-bold">{course.title}</h1>
-              
-              <p className="text-lg text-muted-foreground max-w-3xl">
-                {course.description}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{course.duration}</span>
+        {/* Header Section */}
+        <div className="bg-gradient-card p-8 rounded-2xl shadow-card mb-10 border-border/50 animate-fade-in-down">
+          <div className="flex flex-col md:flex-row md:items-start gap-8">
+            <div className="flex-grow">
+                <div className="flex items-center gap-4 mb-2">
+                    <span className="px-3 py-1.5 text-sm font-semibold rounded-full bg-secondary text-secondary-foreground border border-border">{course.category}</span>
+                    <span className="px-3 py-1.5 text-sm font-semibold rounded-full bg-secondary text-secondary-foreground border border-border">{course.difficulty}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  <span>{course.instructor}</span>
-                </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">{course.title}</h1>
+              <p className="mt-4 text-lg text-muted-foreground">{course.description}</p>
+              <div className="flex items-center flex-wrap gap-x-6 gap-y-2 mt-6 text-muted-foreground">
+                <div className="flex items-center gap-2"><Clock className="h-5 w-5 text-primary" /><span>{course.duration}</span></div>
+                <div className="flex items-center gap-2"><User className="h-5 w-5 text-primary" /><span>{course.instructor.name}</span></div>
               </div>
+              <div className="mt-8">
+                {isEnrolled ? (
+                    <Link to={`/course/${course.id}/player`}>
+                        <Button size="lg" className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6">Start Learning</Button>
+                    </Link>
+                ) : (
+                    <Button size="lg" className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6" onClick={handleEnroll}>Enroll Now</Button>
+                )}
+              </div>
+            </div>
+            <div className="w-full md:w-1/3 flex-shrink-0">
+              <img src={course.imageUrl} alt={course.title} className="w-full h-auto object-cover rounded-xl shadow-lg"/>
+            </div>
+          </div>
+        </div>
 
-              <Button size="lg" onClick={handleEnroll} className="mt-4">
-                <PlayCircle className="mr-2 h-5 w-5" />
-                Start Learning
-              </Button>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+          {/* Main Content: Modules & Instructor */}
+          <div className="lg:col-span-2">
+            {/* What you will learn */}
+            <div className="bg-gradient-card p-6 rounded-2xl shadow-card mb-8 border-border/50">
+                <h2 className="text-2xl font-bold mb-4 flex items-center"><CheckCircle className="h-6 w-6 mr-3 text-primary"/>What You'll Learn</h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-muted-foreground">
+                    {course.whatYouWillLearn.map((point, i) => (
+                        <li key={i} className="flex items-start"><CheckCircle className="h-4 w-4 mr-2 mt-1 text-green-500 flex-shrink-0"/><span>{point}</span></li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* Modules Section */}
+            <div>
+              <h2 className="text-3xl font-bold mb-4"><BookOpen className="h-8 w-8 inline-block mr-3 text-primary"/>Course Content</h2>
+              <Accordion type="single" collapsible className="w-full bg-gradient-card rounded-2xl shadow-card border-border/50 p-2">
+                {course.modules.map((module, index) => (
+                  <AccordionItem value={`item-${index}`} key={index} className="border-b-border/50">
+                    <AccordionTrigger className="hover:no-underline p-4">
+                      <div className="flex-grow text-left">
+                        <h3 className="font-semibold text-lg">{module.title}</h3>
+                        <span className="text-sm text-muted-foreground">{module.lessons.length} lessons</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="p-4 pt-0">
+                      <ul className="space-y-3">
+                        {module.lessons.map((lesson, lessonIndex) => (
+                          <li key={lessonIndex} className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
+                            <PlayCircle className="h-5 w-5 mr-3 text-primary"/> 
+                            <span>{lesson.title}</span>
+                            <span className="ml-auto text-xs">{lesson.duration}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+
+            {/* Instructor Section */}
+            <div className="mt-12">
+                <h2 className="text-3xl font-bold mb-4"><Users className="h-8 w-8 inline-block mr-3 text-primary"/>Instructor</h2>
+                <Card className="bg-gradient-card p-6 rounded-2xl shadow-card border-border/50">
+                    <CardContent className="flex items-center gap-6 p-0">
+                        <div className="h-24 w-24 rounded-full bg-primary-foreground flex items-center justify-center text-4xl font-bold text-primary shadow-inner">{course.instructor.avatar}</div>
+                        <div>
+                            <h3 className="text-2xl font-bold">{course.instructor.name}</h3>
+                            <p className="text-md text-primary font-semibold">{course.instructor.title}</p>
+                            <p className="text-sm text-muted-foreground mt-2">{course.instructor.bio}</p>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="container p-6">
-            <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="modules">Modules</TabsTrigger>
-                <TabsTrigger value="resources">Resources</TabsTrigger>
-                <TabsTrigger value="instructor">Instructor</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="space-y-4">
-                <Card>
-                  <CardContent className="pt-6">
-                    <h2 className="text-xl font-heading font-bold mb-4">What You'll Learn</h2>
-                    <ul className="space-y-2">
-                      <li className="flex items-start gap-2">
-                        <span className="text-primary mt-1">✓</span>
-                        <span>Build and secure complete CI/CD pipelines from scratch</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-primary mt-1">✓</span>
-                        <span>Implement automated security scanning and vulnerability management</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-primary mt-1">✓</span>
-                        <span>Master container and Kubernetes security best practices</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-primary mt-1">✓</span>
-                        <span>Apply infrastructure as code security principles</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-primary mt-1">✓</span>
-                        <span>Automate compliance and security policy enforcement</span>
-                      </li>
+          {/* Sidebar: Course Stats & Resources */}
+          <div className="lg:col-span-1 space-y-8">
+            <Card className="bg-gradient-card p-6 rounded-2xl shadow-card border-border/50">
+                <CardContent className="p-0">
+                    <h3 className="text-xl font-bold mb-4">Course Stats</h3>
+                    <ul className="space-y-3 text-muted-foreground">
+                        <li className="flex items-center justify-between"><span className="flex items-center"><BarChart className="h-5 w-5 mr-2 text-primary"/>Difficulty</span> <strong>{course.difficulty}</strong></li>
+                        <li className="flex items-center justify-between"><span className="flex items-center"><Video className="h-5 w-5 mr-2 text-primary"/>Total Lessons</span> <strong>{totalLessons}</strong></li>
+                        <li className="flex items-center justify-between"><span className="flex items-center"><Clock className="h-5 w-5 mr-2 text-primary"/>Duration</span> <strong>{course.duration}</strong></li>
                     </ul>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                </CardContent>
+            </Card>
 
-              <TabsContent value="modules">
-                <Accordion type="single" collapsible className="space-y-2">
-                  {course.modules.map((module: any, index: number) => (
-                    <AccordionItem key={index} value={`module-${index}`} className="border rounded-lg px-4">
-                      <AccordionTrigger className="hover:no-underline">
-                        <span className="font-semibold">{module.title}</span>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul className="space-y-2">
-                          {module.lessons.map((lesson: string, lessonIndex: number) => (
-                            <li key={lessonIndex} className="flex items-center gap-3 py-2">
-                              <PlayCircle className="h-4 w-4 text-muted-foreground" />
-                              <span>{lesson}</span>
-                            </li>
-                          ))}
+            <Card className="bg-gradient-card p-6 rounded-2xl shadow-card border-border/50">
+                <CardContent className="p-0">
+                    <h3 className="text-xl font-bold mb-4">Resources</h3>
+                    {course.resources.length > 0 ? (
+                        <ul className="space-y-3">
+                            {course.resources.map((resource, index) => (
+                                <li key={index}>
+                                    <a href={resource.link} target="_blank" rel="noopener noreferrer" className="flex items-center text-muted-foreground hover:text-primary group">
+                                        <ExternalLink className="h-4 w-4 mr-2 text-primary/80 group-hover:text-primary"/>
+                                        <span>{resource.title}</span>
+                                    </a>
+                                </li>
+                            ))}
                         </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </TabsContent>
-
-              <TabsContent value="resources" className="space-y-4">
-                {course.resources.map((resource: any, index: number) => (
-                  <Card key={index}>
-                    <CardContent className="flex items-center justify-between p-4">
-                      <div className="flex items-center gap-3">
-                        {resource.type === "pdf" ? (
-                          <FileText className="h-8 w-8 text-primary" />
-                        ) : (
-                          <Github className="h-8 w-8 text-primary" />
-                        )}
-                        <div>
-                          <p className="font-semibold">{resource.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {resource.type === "pdf" ? "PDF Document" : "GitHub Repository"}
-                          </p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Download
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-
-              <TabsContent value="instructor">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-4">
-                      <div className="h-20 w-20 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white">
-                        {course.instructor.charAt(0)}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-heading font-bold">{course.instructor}</h3>
-                        <p className="text-muted-foreground mb-4">{course.instructorTitle}</p>
-                        <p className="text-sm">
-                          Expert cloud security engineer with over 8 years of experience in DevSecOps,
-                          infrastructure security, and compliance automation. Passionate about teaching
-                          and helping organizations build secure cloud-native applications.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No resources available for this course.</p>
+                    )}
+                </CardContent>
+            </Card>
           </div>
-        </main>
-      </div>
+        </div>
 
-      <Footer />
-    </div>
+      </div>
+    </AnimatedPage>
   );
 };
 

@@ -1,184 +1,149 @@
-import { useState } from "react";
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import Footer from "@/components/Footer";
-import CourseCard from "@/components/CourseCard";
-import { Input } from "@/components/ui/input";
+import AnimatedPage from "@/components/AnimatedPage";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+import { Clock, Search } from "lucide-react";
+import { useState } from "react";
+import { courseData, Course } from "@/data/courseData";
 
-const allCourses = [
-  {
-    id: "aws-foundations",
-    title: "AWS Certified Solutions Architect — Foundations",
-    description: "Master AWS core services and architectural best practices for building scalable cloud solutions.",
-    duration: "40 hours",
-    difficulty: "Beginner" as const,
-    category: "AWS",
-  },
-  {
-    id: "devsecops-masterclass",
-    title: "DevSecOps Masterclass — Secure CI/CD",
-    description: "Build secure continuous integration and deployment pipelines with industry-standard tools.",
-    duration: "35 hours",
-    difficulty: "Intermediate" as const,
-    category: "DevSecOps",
-  },
-  {
-    id: "terraform-infrastructure",
-    title: "Terraform for Cloud Infrastructure",
-    description: "Infrastructure as Code with Terraform for AWS, Azure, and GCP multi-cloud deployments.",
-    duration: "30 hours",
-    difficulty: "Intermediate" as const,
-    category: "Terraform",
-  },
-  {
-    id: "jenkins-automation",
-    title: "Jenkins CI/CD Pipeline Automation",
-    description: "Automate your build, test, and deployment workflows using Jenkins and pipeline as code.",
-    duration: "25 hours",
-    difficulty: "Intermediate" as const,
-    category: "Jenkins",
-  },
-  {
-    id: "kubernetes-security",
-    title: "Kubernetes Security Best Practices",
-    description: "Secure your containerized applications and Kubernetes orchestration platform comprehensively.",
-    duration: "28 hours",
-    difficulty: "Advanced" as const,
-    category: "Kubernetes",
-  },
-  {
-    id: "aws-security",
-    title: "AWS Security Fundamentals",
-    description: "Deep dive into AWS security services, IAM, encryption, and compliance frameworks.",
-    duration: "32 hours",
-    difficulty: "Intermediate" as const,
-    category: "AWS",
-  },
-  {
-    id: "docker-containers",
-    title: "Docker Containerization Essentials",
-    description: "Learn containerization with Docker from basics to advanced multi-stage builds and orchestration.",
-    duration: "22 hours",
-    difficulty: "Beginner" as const,
-    category: "Docker",
-  },
-  {
-    id: "ansible-automation",
-    title: "Ansible Configuration Management",
-    description: "Automate infrastructure configuration and application deployment with Ansible playbooks.",
-    duration: "26 hours",
-    difficulty: "Intermediate" as const,
-    category: "Ansible",
-  },
-  {
-    id: "cloud-cost-optimization",
-    title: "Cloud Cost Optimization Strategies",
-    description: "Learn to optimize cloud spending across AWS, Azure, and GCP with proven strategies.",
-    duration: "18 hours",
-    difficulty: "Advanced" as const,
-    category: "AWS",
-  },
+const categories: Course['category'][] = [
+  "Learning Paths", "Linux", "AWS", "Azure", "GCP", "Git", "Jenkins", "Ansible", "Docker", "Kubernetes", "Prometheus & Grafana", "ELK Stack", "Terraform", "Helm", "Argo CD"
 ];
-
-const categories = ["All", "AWS", "DevSecOps", "Terraform", "Jenkins", "Kubernetes", "Docker", "Ansible"];
+const difficultyOrder = ["Beginner", "Intermediate", "Advanced"];
 
 const Courses = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState<Course['category'] | 'All'>("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const user = { name: "Rajesh" };
 
-  const filteredCourses = allCourses.filter((course) => {
-    const matchesCategory = selectedCategory === "All" || course.category === selectedCategory;
-    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const CourseCard = ({ course }: { course: Course }) => (
+    <Card key={course.id} className="flex flex-col overflow-hidden rounded-2xl shadow-card hover:shadow-elevated transition-all duration-500 border-border/50 group bg-gradient-card animate-scale-in">
+      <div className="relative h-48 bg-gradient-hero flex items-center justify-center p-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
+        <img src={course.imageUrl} alt={course.title} className="h-24 w-auto object-contain transition-transform group-hover:scale-110 duration-500 z-10" />
+        <span className={`absolute top-3 right-3 px-3 py-1.5 text-xs font-semibold rounded-full shadow-md z-10 ${course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800 border border-green-200' : course.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
+          {course.difficulty}
+        </span>
+      </div>
+      <CardContent className="p-6 flex flex-col flex-grow">
+        <span className="text-xs font-semibold uppercase bg-gradient-primary bg-clip-text text-transparent">{course.category}</span>
+        <h2 className="text-xl font-bold mt-2 group-hover:text-primary transition-colors duration-300">{course.title}</h2>
+        <p className="mt-3 text-sm text-muted-foreground flex-grow leading-relaxed">{course.description}</p>
+        <div className="flex items-center mt-4 text-sm text-muted-foreground">
+          <Clock className="h-4 w-4 mr-2" />
+          <span>{course.duration}</span>
+        </div>
+        <div className="mt-6 w-full">
+            <Link to={`/course/${course.id}`} className="w-full">
+              <Button className="w-full shadow-card hover:shadow-hover transition-all duration-300">View Details</Button>
+            </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderContent = () => {
+    const filteredBySearch = courseData.filter(course => 
+        course.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (selectedCategory === "Learning Paths") {
+        const learningPathCourses = filteredBySearch.filter(course => course.category === "Learning Paths");
+        if (learningPathCourses.length === 0) {
+             return <p className="mt-8 text-center text-muted-foreground">No learning paths found.</p>;
+        }
+        return (
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {learningPathCourses.map(course => <CourseCard key={course.id} course={course} />)}
+            </div>
+        );
+    }
+    
+    if (selectedCategory !== "All") {
+        const categoryCourses = filteredBySearch.filter(course => course.category === selectedCategory);
+
+        if (categoryCourses.length === 0) {
+            return <p className="mt-8 text-center text-muted-foreground">No courses available for this selection.</p>;
+        }
+
+        categoryCourses.sort((a, b) => difficultyOrder.indexOf(a.difficulty) - difficultyOrder.indexOf(b.difficulty));
+
+        return (
+            <div className="mt-8">
+                <h2 className="text-3xl font-bold mb-6 text-primary">{selectedCategory}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {categoryCourses.map(course => <CourseCard key={course.id} course={course} />)}
+                </div>
+            </div>
+        );
+    }
+
+    const coursesToGroup = filteredBySearch.filter(course => course.category !== "Learning Paths");
+
+    const groupedByDifficulty = coursesToGroup.reduce((acc, course) => {
+      (acc[course.difficulty] = acc[course.difficulty] || []).push(course);
+      return acc;
+    }, {} as Record<Course['difficulty'], Course[]>);
+
+    const hasCourses = Object.values(groupedByDifficulty).some(group => group.length > 0);
+
+    if (!hasCourses) {
+        return <p className="mt-8 text-center text-muted-foreground">No courses available for this selection.</p>;
+    }
+
+    return (
+        <div className="space-y-12 mt-8">
+            {difficultyOrder.map(difficulty => {
+                const coursesInGroup = groupedByDifficulty[difficulty as Course['difficulty']];
+                if (coursesInGroup && coursesInGroup.length > 0) {
+                    return (
+                        <div key={difficulty}>
+                            <h2 className="text-2xl font-bold mb-4 text-primary">
+                                {difficulty}
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {coursesInGroup.map(course => <CourseCard key={course.id} course={course} />)}
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
+            })}
+        </div>
+    );
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-        showMenu
-        user={user}
-      />
+    <AnimatedPage>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent animate-fade-in-down">Course Catalog</h1>
+        <p className="text-muted-foreground mt-3 text-lg animate-fade-in-up">
+          Explore our comprehensive collection of cloud and security courses
+        </p>
 
-      <div className="flex flex-1">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="relative mt-6 animate-fade-in-up">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input 
+            placeholder="Search courses..." 
+            className="pl-12 h-12 rounded-xl shadow-card focus:shadow-hover transition-all duration-300 border-border/50" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
-        <main className="flex-1 lg:ml-64">
-          <div className="container p-6 space-y-8">
-            {/* Header */}
-            <div>
-              <h1 className="text-3xl font-heading font-bold mb-2">Course Catalog</h1>
-              <p className="text-muted-foreground">
-                Explore our comprehensive collection of cloud and security courses
-              </p>
-            </div>
+        <div className="mt-6 flex flex-wrap gap-2">
+            <Button key="All" variant={selectedCategory === 'All' ? 'default' : 'outline'} onClick={() => setSelectedCategory('All')}>All</Button>
+            {categories.map(cat => (
+                <Button key={cat} variant={selectedCategory === cat ? 'default' : 'outline'} onClick={() => setSelectedCategory(cat)}>
+                {cat}
+                </Button>
+            ))}
+        </div>
+        
+        {renderContent()}
 
-            {/* Search and Filters */}
-            <div className="space-y-4">
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search courses..."
-                  className="pl-9"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCategory(category)}
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Results */}
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Showing {filteredCourses.length} {filteredCourses.length === 1 ? "course" : "courses"}
-              </p>
-              
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredCourses.map((course) => (
-                  <CourseCard key={course.id} {...course} />
-                ))}
-              </div>
-
-              {filteredCourses.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No courses found matching your criteria.</p>
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      setSelectedCategory("All");
-                      setSearchQuery("");
-                    }}
-                    className="mt-2"
-                  >
-                    Clear filters
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </main>
       </div>
-
-      <Footer />
-    </div>
+    </AnimatedPage>
   );
 };
 
