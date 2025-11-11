@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { Clock, Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { courseData, Course } from "@/data/courseData";
 
 const categories: Course['category'][] = [
-  "Learning Paths", "AWS", "Azure", "GCP", "Git", "Jenkins", "Ansible", "Docker", "Kubernetes", "Prometheus & Grafana", "ELK Stack", "Terraform", "Helm", "Argo CD"
+  "Learning Paths", "Linux", "AWS", "Azure", "GCP", "Git", "Jenkins", "Ansible", "Docker", "Kubernetes", "Prometheus & Grafana", "ELK Stack", "Terraform", "Helm", "Argo CD"
 ];
 const difficultyOrder = ["Beginner", "Intermediate", "Advanced"];
 
@@ -58,10 +58,27 @@ const Courses = () => {
             </div>
         );
     }
+    
+    if (selectedCategory !== "All") {
+        const categoryCourses = filteredBySearch.filter(course => course.category === selectedCategory);
 
-    const coursesToGroup = selectedCategory === "All"
-      ? filteredBySearch.filter(course => course.category !== "Learning Paths")
-      : filteredBySearch.filter(course => course.category === selectedCategory);
+        if (categoryCourses.length === 0) {
+            return <p className="mt-8 text-center text-muted-foreground">No courses available for this selection.</p>;
+        }
+
+        categoryCourses.sort((a, b) => difficultyOrder.indexOf(a.difficulty) - difficultyOrder.indexOf(b.difficulty));
+
+        return (
+            <div className="mt-8">
+                <h2 className="text-3xl font-bold mb-6 text-primary">{selectedCategory}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {categoryCourses.map(course => <CourseCard key={course.id} course={course} />)}
+                </div>
+            </div>
+        );
+    }
+
+    const coursesToGroup = filteredBySearch.filter(course => course.category !== "Learning Paths");
 
     const groupedByDifficulty = coursesToGroup.reduce((acc, course) => {
       (acc[course.difficulty] = acc[course.difficulty] || []).push(course);
@@ -82,7 +99,7 @@ const Courses = () => {
                     return (
                         <div key={difficulty}>
                             <h2 className="text-2xl font-bold mb-4 text-primary">
-                                {selectedCategory === "All" ? difficulty : `${selectedCategory} - ${difficulty}`}
+                                {difficulty}
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {coursesInGroup.map(course => <CourseCard key={course.id} course={course} />)}

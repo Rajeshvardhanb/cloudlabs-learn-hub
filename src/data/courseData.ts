@@ -14,7 +14,7 @@ export interface Module {
 export interface Course {
   id: number;
   title: string;
-  category: "AWS" | "GCP" | "Azure" | "Terraform" | "Jenkins" | "Kubernetes" | "Docker" | "Ansible" | "Git" | "Prometheus & Grafana" | "ELK Stack" | "Helm" | "Argo CD" | "Learning Paths" | "DevSecOps";
+  category: "AWS" | "GCP" | "Azure" | "Terraform" | "Jenkins" | "Kubernetes" | "Docker" | "Ansible" | "Git" | "Prometheus & Grafana" | "ELK Stack" | "Helm" | "Argo CD" | "Learning Paths" | "DevSecOps" | "Linux";
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   duration: string;
   imageUrl: string;
@@ -49,6 +49,50 @@ export const courseData: Course[] = [
     modules: [{ title: "Phase 1: Cloud Foundations", lessons: [{ id: "lp-1-1", title: "AWS Core Services" }] }],
     totalLessons: 1,
     resources: [{ title: "Internship Project Workbook", link: "#" }]
+  },
+
+  // --- Linux ---
+  {
+    id: 1401,
+    title: "Linux for Beginners",
+    category: "Linux",
+    difficulty: "Beginner",
+    duration: "20 hours",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg",
+    description: "Start your journey with the powerful Linux operating system.",
+    instructor: { name: "Linus T.", title: "Linux Kernel Creator", avatar: "LT", bio: "..." },
+    whatYouWillLearn: ["Basic shell commands", "File system navigation", "User management"],
+    modules: [{ title: "Intro to Linux", lessons: [{ id: "linux-b-1", title: "First Lesson" }] }],
+    totalLessons: 1,
+    resources: []
+  },
+  {
+    id: 1402,
+    title: "Linux for Intermediate Users",
+    category: "Linux",
+    difficulty: "Intermediate",
+    duration: "30 hours",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg",
+    description: "Enhance your Linux skills with shell scripting and process management.",
+    instructor: { name: "Linus T.", title: "Linux Kernel Creator", avatar: "LT", bio: "..." },
+    whatYouWillLearn: ["Shell scripting", "Process management", "Networking fundamentals"],
+    modules: [{ title: "Intermediate Linux", lessons: [{ id: "linux-i-1", title: "First Lesson" }] }],
+    totalLessons: 1,
+    resources: []
+  },
+  {
+    id: 1403,
+    title: "Advanced Linux",
+    category: "Linux",
+    difficulty: "Advanced",
+    duration: "40 hours",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg",
+    description: "Master the Linux kernel, security, and system administration.",
+    instructor: { name: "Linus T.", title: "Linux Kernel Creator", avatar: "LT", bio: "..." },
+    whatYouWillLearn: ["Kernel compilation", "Advanced security", "System administration"],
+    modules: [{ title: "Advanced Linux", lessons: [{ id: "linux-a-1", title: "First Lesson" }] }],
+    totalLessons: 1,
+    resources: []
   },
 
   // --- AWS ---
