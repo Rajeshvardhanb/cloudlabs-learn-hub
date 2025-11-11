@@ -34,7 +34,7 @@ const CoursePlayer = () => {
   const getYoutubeEmbedUrl = (url: string) => {
     if (!url) return '';
     const videoId = url.split('/').pop()?.split('?')[0] || '';
-    return `https://www.youtube.com/embed/${videoId}`;
+    return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3`;
   };
 
   if (!course) {
