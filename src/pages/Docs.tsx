@@ -64,15 +64,20 @@ const Docs = () => {
                                   ) => (
                                     <li
                                       key={lessonIndex}
-                                      className={`text-sm text-muted-foreground hover:text-foreground cursor-pointer py-1.5 transition-colors rounded-r-md pl-2 ${selectedTopic?.topic === lesson ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border-l-2 border-blue-500 ml-[-1px]' : 'border-l-2 border-transparent'}`}
+                                      className={`text-sm text-muted-foreground hover:text-foreground cursor-pointer py-1.5 transition-colors rounded-r-md pl-2 ${selectedTopic?.topic === lesson.title ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border-l-2 border-blue-500 ml-[-1px]' : 'border-l-2 border-transparent'}`}
                                       onClick={() =>
                                         setSelectedTopic({
-                                          topic: lesson,
-                                          content: `Content for "${lesson}" from "${module.title}" is being prepared and will be available shortly. This section will contain detailed explanations, code examples, and best practices related to this topic.`,
+                                          topic: lesson.title,
+                                          content: `Content for "${lesson.title}" from "${module.title}" is being prepared and will be available shortly. This section will contain detailed explanations, code examples, and best practices related to this topic.`,
                                         })
                                       }
                                     >
-                                      {lesson}
+                                      {lesson.title}
+                                      {lesson.duration && (
+                                        <span className="text-xs ml-2 text-muted-foreground/60">
+                                          ({lesson.duration})
+                                        </span>
+                                      )}
                                     </li>
                                   ))
                                 ) : (
