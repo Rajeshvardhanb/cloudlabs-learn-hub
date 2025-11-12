@@ -8,10 +8,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Infinity, Phone, LogOut, User as UserIcon } from "lucide-react";
+import { Infinity, Phone, LogOut, User as UserIcon, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 
 const navLinks = [
   { to: "/dashboard", label: "Dashboard" },
@@ -70,66 +79,163 @@ const Header = () => {
             ))}
           </nav>
 
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-10 w-10 rounded-full transition-transform hover:scale-105 duration-300"
-                >
-                  <Avatar className="h-10 w-10 border-2 border-primary shadow-glow">
-                    <AvatarImage src={user.image} alt={user.name} />
-                    <AvatarFallback className="bg-gradient-primary font-bold text-primary-foreground">
-                      {user.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 rounded-xl border border-border/20 bg-gradient-accent shadow-elevated backdrop-blur-xl"
-                align="end"
-                forceMount
-              >
-                <DropdownMenuItem asChild>
-                  <Link
-                    to="/profile"
-                    className="flex w-full cursor-pointer items-center rounded-md text-accent-foreground hover:bg-white/10"
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle>Navigation</SheetTitle>
+                  <SheetDescription>
+                    Explore the INFINITY CLOUD LABS
+                  </SheetDescription>
+                </SheetHeader>
+                <nav className="flex flex-col gap-4 mt-8">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      className={cn(
+                        "flex items-center gap-2 py-2 px-3 text-lg font-medium transition-all duration-300 rounded-lg",
+                        location.pathname.startsWith(link.to)
+                          ? "text-accent-foreground bg-accent-foreground/10"
+                          : "text-accent-foreground/60 hover:text-accent-foreground hover:bg-accent-foreground/5"
+                      )}
+                    >
+                      {link.icon && <link.icon className="h-5 w-5" />}
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
+                <div className="mt-8">
+                  {user ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="relative h-10 w-10 rounded-full transition-transform hover:scale-105 duration-300"
+                        >
+                          <Avatar className="h-10 w-10 border-2 border-primary shadow-glow">
+                            <AvatarImage src={user.image} alt={user.name} />
+                            <AvatarFallback className="bg-gradient-primary font-bold text-primary-foreground">
+                              {user.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="w-56 rounded-xl border border-border/20 bg-gradient-accent shadow-elevated backdrop-blur-xl"
+                        align="end"
+                        forceMount
+                      >
+                        <DropdownMenuItem asChild>
+                          <Link
+                            to="/profile"
+                            className="flex w-full cursor-pointer items-center rounded-md text-accent-foreground hover:bg-white/10"
+                          >
+                            <UserIcon className="mr-2 h-4 w-4" />
+                            <span>Profile</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-white/20" />
+                        <DropdownMenuItem
+                          onClick={handleLogout}
+                          className="cursor-pointer rounded-md text-accent-foreground hover:bg-red-500/20 hover:text-red-400"
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          <span>Log out</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      <Link to="/auth">
+                        <Button
+                          variant="outline"
+                          className="w-full border-primary/50 text-accent-foreground hover:bg-primary hover:text-primary-foreground shadow-card hover:shadow-hover transition-all duration-300"
+                        >
+                          Login
+                        </Button>
+                      </Link>
+                      <Link to="/auth">
+                        <Button
+                          className="w-full shadow-card hover:shadow-glow transition-all duration-300"
+                        >
+                          Get Started
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          <div className="hidden md:flex items-center gap-3">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative h-10 w-10 rounded-full transition-transform hover:scale-105 duration-300"
                   >
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-white/20" />
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="cursor-pointer rounded-md text-accent-foreground hover:bg-red-500/20 hover:text-red-400"
+                    <Avatar className="h-10 w-10 border-2 border-primary shadow-glow">
+                      <AvatarImage src={user.image} alt={user.name} />
+                      <AvatarFallback className="bg-gradient-primary font-bold text-primary-foreground">
+                        {user.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-56 rounded-xl border border-border/20 bg-gradient-accent shadow-elevated backdrop-blur-xl"
+                  align="end"
+                  forceMount
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-3">
-              <Link to="/auth">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-primary/50 text-accent-foreground hover:bg-primary hover:text-primary-foreground shadow-card hover:shadow-hover transition-all duration-300"
-                >
-                  Login
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button
-                  size="sm"
-                  className="shadow-card hover:shadow-glow transition-all duration-300"
-                >
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          )}
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/profile"
+                      className="flex w-full cursor-pointer items-center rounded-md text-accent-foreground hover:bg-white/10"
+                    >
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/20" />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="cursor-pointer rounded-md text-accent-foreground hover:bg-red-500/20 hover:text-red-400"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link to="/auth">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-primary/50 text-accent-foreground hover:bg-primary hover:text-primary-foreground shadow-card hover:shadow-hover transition-all duration-300"
+                  >
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button
+                    size="sm"
+                    className="shadow-card hover:shadow-glow transition-all duration-300"
+                  >
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
