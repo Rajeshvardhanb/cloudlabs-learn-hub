@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { courseData, Lesson } from "@/data/courseData";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link } from "react-router-dom"; // Import Link
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "firebase/firestore";
@@ -162,6 +162,15 @@ const CoursePlayer = () => {
         </div>
 
         <div className="flex-1 flex flex-col p-4 sm:p-6 md:p-8 overflow-y-auto">
+          {/* Breadcrumb */}
+          <nav className="mb-4 text-sm text-muted-foreground flex items-center">
+            <Link to="/courses" className="hover:text-primary transition-colors">Courses</Link>
+            <ChevronRight className="h-4 w-4 mx-2" />
+            <Link to={`/courses?category=${course.category}`} className="hover:text-primary transition-colors">{course.category}</Link>
+            <ChevronRight className="h-4 w-4 mx-2" />
+            <span className="text-foreground">{course.title}</span>
+          </nav>
+
           {/* Video Player */}
           <div 
             className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden"
