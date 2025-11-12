@@ -116,63 +116,232 @@ export const courseData: Course[] = [
   },
 
   // --- AWS ---
-  {
-    id: 1,
-    title: "AWS Certified Solutions Architect – Foundations",
-    category: "AWS",
-    difficulty: "Beginner",
-    duration: "40 hours",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
-    description: "Master AWS core services for building applications.",
-    instructor: { name: "John Doe", title: "Cloud Architect", avatar: "J", bio: "..." },
-    whatYouWillLearn: ["Core AWS services", "EC2, S3, and VPC fundamentals"],
-    modules: [
-      { title: "AWS Fundamentals", lessons: [{ id: "aws-b-1", title: "Introduction to AWS", duration: "1h 30m" }, { id: "aws-b-2", title: "AWS Global Infrastructure", duration: "1h" }, { id: "aws-b-3", title: "IAM Essentials", duration: "2h" }] },
-      { title: "Compute Services", lessons: [{ id: "aws-b-4", title: "EC2 Fundamentals", duration: "2h 30m" }, { id: "aws-b-5", title: "EBS & AMI", duration: "1h 45m" }, { id: "aws-b-6", title: "Load Balancers", duration: "2h" }] },
-      { title: "Storage & Databases", lessons: [{ id: "aws-b-7", title: "S3 Deep Dive", duration: "2h 30m" }, { id: "aws-b-8", title: "RDS & DynamoDB", duration: "2h 15m" }] },
-      { title: "Networking", lessons: [{ id: "aws-b-9", title: "VPC Fundamentals", duration: "2h 30m" }, { id: "aws-b-10", title: "Security Groups", duration: "1h 30m" }] }
-    ],
-    totalLessons: 10,
-    resources: []
+  // ===================== AWS COURSES - INFINITY CLOUD LABS =====================
+
+{
+  id: 1,
+  title: "AWS – Beginner",
+  category: "AWS",
+  difficulty: "Beginner",
+  duration: "40 hours",
+  imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+  description:
+    "This foundational course introduces learners to the fundamentals of cloud computing and AWS services. It’s designed for beginners who want to understand cloud concepts, AWS global infrastructure, and the basics of key AWS compute, storage, and networking services. By the end, students will be able to navigate the AWS console, deploy their first EC2 instance, and manage simple storage resources.",
+  instructor: {
+    name: "Rajesh Vardhan Busam",
+    title: "Cloud Architect",
+    avatar: "J",
+    bio: "Rajesh is a seasoned Cloud Architect with hands-on experience in AWS, DevSecOps, and infrastructure automation. He specializes in helping organizations build secure and scalable cloud platforms."
   },
-  {
-    id: 11,
-    title: "AWS Certified Developer - Associate",
-    category: "AWS",
-    difficulty: "Intermediate",
-    duration: "50 hours",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
-    description: "Develop, deploy, and debug cloud-based applications using AWS.",
-    instructor: { name: "John Doe", title: "Cloud Architect", avatar: "J", bio: "..." },
-    whatYouWillLearn: ["Developing with AWS services", "DynamoDB, Lambda, and API Gateway"],
-    modules: [
-      { title: "Serverless Development", lessons: [{ id: "aws-i-1", title: "Lambda Functions", duration: "2h 30m" }, { id: "aws-i-2", title: "API Gateway", duration: "2h" }, { id: "aws-i-3", title: "Step Functions", duration: "2h 15m" }] },
-      { title: "Database Development", lessons: [{ id: "aws-i-4", title: "DynamoDB Design", duration: "2h 30m" }, { id: "aws-i-5", title: "ElastiCache", duration: "1h 45m" }] },
-      { title: "Application Integration", lessons: [{ id: "aws-i-6", title: "SQS & SNS", duration: "2h" }, { id: "aws-i-7", title: "EventBridge", duration: "1h 30m" }] },
-      { title: "Deployment & Monitoring", lessons: [{ id: "aws-i-8", title: "CloudFormation", duration: "2h 30m" }, { id: "aws-i-9", title: "CloudWatch", duration: "2h" }] }
-    ],
-    totalLessons: 9,
-    resources: []
+  whatYouWillLearn: [
+    "Understand core AWS concepts and terminology",
+    "Launch and manage EC2 instances",
+    "Work with S3 storage and EBS volumes",
+    "Understand IAM and VPC basics",
+    "Navigate the AWS Management Console confidently"
+  ],
+  modules: [
+    {
+      title: "Introduction to Cloud Computing",
+      lessons: [
+        { id: "aws-b-1", title: "What is Cloud Computing?", duration: "1h" },
+        { id: "aws-b-2", title: "Advantages of Cloud Computing", duration: "45m" },
+        { id: "aws-b-3", title: "Cloud Service and Deployment Models", duration: "1h" },
+        { id: "aws-b-4", title: "Overview of AWS", duration: "1h" },
+        { id: "aws-b-5", title: "Regions and Availability Zones", duration: "45m" },
+        { id: "aws-b-6", title: "AWS Global Infrastructure (Lab)", duration: "1h 30m" }
+      ]
+    },
+    {
+      title: "Compute Services Overview (EC2)",
+      lessons: [
+        { id: "aws-b-7", title: "Introduction to Amazon EC2", duration: "1h 15m" },
+        { id: "aws-b-8", title: "EC2 Console Walkthrough (Lab)", duration: "1h 30m" },
+        { id: "aws-b-9", title: "Instance Types and Features", duration: "1h" },
+        { id: "aws-b-10", title: "AMI and Key Pairs", duration: "1h" },
+        { id: "aws-b-11", title: "Security Groups and Networking Basics", duration: "1h" },
+        { id: "aws-b-12", title: "Public, Private, and Elastic IPs", duration: "45m" },
+        { id: "aws-b-13", title: "EC2 Product Demonstration (Lab)", duration: "1h 30m" },
+        { id: "aws-b-14", title: "Knowledge Check", duration: "30m" }
+      ]
+    },
+    {
+      title: "Elastic Block Store (EBS)",
+      lessons: [
+        { id: "aws-b-15", title: "Introduction to EBS", duration: "45m" },
+        { id: "aws-b-16", title: "EBS Volume Types and Use Cases", duration: "1h" },
+        { id: "aws-b-17", title: "EBS Lifecycle and Volume Management", duration: "1h" },
+        { id: "aws-b-18", title: "Snapshots and AMIs", duration: "1h" },
+        { id: "aws-b-19", title: "EBS Product Demonstration (Lab)", duration: "1h 30m" }
+      ]
+    },
+    {
+      title: "Simple Storage Service (S3)",
+      lessons: [
+        { id: "aws-b-20", title: "Introduction to S3", duration: "1h" },
+        { id: "aws-b-21", title: "Bucket and Object Concepts", duration: "45m" },
+        { id: "aws-b-22", title: "Object Versioning and Lifecycle Management", duration: "1h" },
+        { id: "aws-b-23", title: "S3 Product Demonstration (Lab)", duration: "1h 30m" }
+      ]
+    },
+    {
+      title: "Identity and Access Management (IAM)",
+      lessons: [
+        { id: "aws-b-24", title: "Introduction to IAM", duration: "1h" },
+        { id: "aws-b-25", title: "Users, Groups, and Roles", duration: "1h" },
+        { id: "aws-b-26", title: "IAM Product Demonstration (Lab)", duration: "1h 15m" }
+      ]
+    },
+    {
+      title: "Networking Fundamentals (VPC)",
+      lessons: [
+        { id: "aws-b-27", title: "Introduction to VPC", duration: "1h" },
+        { id: "aws-b-28", title: "Understanding CIDR", duration: "45m" },
+        { id: "aws-b-29", title: "VPC Product Demonstration (Lab)", duration: "1h 30m" }
+      ]
+    }
+  ],
+  totalLessons: 29,
+  resources: [
+    { title: "AWS Documentation", link: "https://docs.aws.amazon.com" },
+    { title: "AWS Free Tier", link: "https://aws.amazon.com/free/" },
+    { title: "AWS CLI Setup Guide", link: "https://docs.aws.amazon.com/cli/latest/userguide/" }
+  ]
+},
+
+// ------------------------------------------------------------------------
+
+{
+  id: 11,
+  title: "AWS – Intermediate",
+  category: "AWS",
+  difficulty: "Intermediate",
+  duration: "50 hours",
+  imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+  description:
+    "This intermediate course dives deeper into AWS compute, networking, and database services. Learners will build resilient VPC architectures, configure auto-scaling, and integrate key database services. Practical labs focus on hands-on AWS infrastructure deployment and scaling.",
+  instructor: {
+    name: "Rajesh Vardhan Busam",
+    title: "Cloud Architect",
+    avatar: "J",
+    bio: "Rajesh is a certified AWS professional with extensive experience in DevOps, container orchestration, and security automation."
   },
-  {
-    id: 12,
-    title: "Advanced Networking on AWS",
-    category: "AWS",
-    difficulty: "Advanced",
-    duration: "30 hours",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
-    description: "Deep dive into VPCs, Transit Gateway, and Direct Connect.",
-    instructor: { name: "John Doe", title: "Cloud Architect", avatar: "J", bio: "..." },
-    whatYouWillLearn: ["VPC peering", "Hybrid connectivity", "Complex network architectures"],
-    modules: [
-      { title: "Advanced VPC Design", lessons: [{ id: "aws-a-1", title: "VPC Peering", duration: "2h" }, { id: "aws-a-2", title: "Transit Gateway", duration: "2h 30m" }, { id: "aws-a-3", title: "PrivateLink", duration: "2h" }] },
-      { title: "Hybrid Connectivity", lessons: [{ id: "aws-a-4", title: "Direct Connect", duration: "2h 30m" }, { id: "aws-a-5", title: "VPN Solutions", duration: "2h" }] },
-      { title: "Network Security", lessons: [{ id: "aws-a-6", title: "Network ACLs", duration: "1h 30m" }, { id: "aws-a-7", title: "AWS WAF & Shield", duration: "2h" }] },
-      { title: "Optimization", lessons: [{ id: "aws-a-8", title: "CloudFront", duration: "2h" }, { id: "aws-a-9", title: "Route 53", duration: "1h 30m" }] }
-    ],
-    totalLessons: 9,
-    resources: []
+  whatYouWillLearn: [
+    "Designing and managing scalable AWS architectures",
+    "Implementing load balancing and auto-scaling",
+    "Working with relational and NoSQL databases on AWS",
+    "Configuring IAM roles and security best practices"
+  ],
+  modules: [
+    {
+      title: "Virtual Private Cloud (VPC) Deep Dive",
+      lessons: [
+        { id: "aws-i-1", title: "VPC Design and Components", duration: "1h 30m" },
+        { id: "aws-i-2", title: "Subnets, Route Tables, and Gateways", duration: "1h 45m" },
+        { id: "aws-i-3", title: "VPC Peering and Transit Gateway", duration: "2h" },
+        { id: "aws-i-4", title: "VPC Product Demonstration (Lab)", duration: "2h" }
+      ]
+    },
+    {
+      title: "Elastic Load Balancing & Auto Scaling",
+      lessons: [
+        { id: "aws-i-5", title: "Introduction to ELB and Auto Scaling", duration: "1h 30m" },
+        { id: "aws-i-6", title: "Types of Load Balancers", duration: "1h" },
+        { id: "aws-i-7", title: "Configuring Auto Scaling Groups", duration: "2h" },
+        { id: "aws-i-8", title: "ELB & ASG Product Demonstration (Lab)", duration: "2h 15m" }
+      ]
+    },
+    {
+      title: "Database Services (RDS & DynamoDB)",
+      lessons: [
+        { id: "aws-i-9", title: "Introduction to RDS and Engine Types", duration: "1h 45m" },
+        { id: "aws-i-10", title: "Multi-AZ Deployment & Read Replicas", duration: "1h 30m" },
+        { id: "aws-i-11", title: "DynamoDB Essentials", duration: "1h 45m" },
+        { id: "aws-i-12", title: "RDS & DynamoDB Product Demonstration (Lab)", duration: "2h" }
+      ]
+    },
+    {
+      title: "Monitoring and CloudFormation",
+      lessons: [
+        { id: "aws-i-13", title: "CloudWatch Metrics and Alarms", duration: "1h 45m" },
+        { id: "aws-i-14", title: "CloudTrail for Logging and Auditing", duration: "1h 15m" },
+        { id: "aws-i-15", title: "Infrastructure as Code with CloudFormation", duration: "2h" },
+        { id: "aws-i-16", title: "CloudFormation Lab: Deploy Stack", duration: "2h 30m" }
+      ]
+    }
+  ],
+  totalLessons: 16,
+  resources: [
+    { title: "AWS CloudFormation Docs", link: "https://docs.aws.amazon.com/cloudformation/" },
+    { title: "AWS CloudWatch Docs", link: "https://docs.aws.amazon.com/cloudwatch/" },
+    { title: "AWS Auto Scaling Guide", link: "https://docs.aws.amazon.com/autoscaling/" }
+  ]
+},
+
+// ------------------------------------------------------------------------
+
+{
+  id: 12,
+  title: "AWS – Advanced",
+  category: "AWS",
+  difficulty: "Advanced",
+  duration: "30 hours",
+  imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+  description:
+    "This advanced course is designed for professionals who want to master AWS at an enterprise level. Students will explore cloud security, advanced networking, monitoring, and serverless architecture. Labs will include real-world scenarios with best practices for automation, resilience, and compliance.",
+  instructor: {
+    name: "Rajesh Vardhan Busam",
+    title: "Cloud Architect",
+    avatar: "J",
+    bio: "Rajesh specializes in advanced AWS architectures, hybrid networking, and cloud automation strategies for large-scale deployments."
   },
+  whatYouWillLearn: [
+    "Design and secure complex multi-account AWS architectures",
+    "Implement hybrid networking with Direct Connect and VPNs",
+    "Optimize cost and performance with Route 53 and CloudFront",
+    "Apply AWS best practices for security and compliance"
+  ],
+  modules: [
+    {
+      title: "Advanced VPC and Connectivity",
+      lessons: [
+        { id: "aws-a-1", title: "VPC Peering and PrivateLink", duration: "2h" },
+        { id: "aws-a-2", title: "Transit Gateway Architecture", duration: "2h 30m" },
+        { id: "aws-a-3", title: "Direct Connect and VPN Solutions", duration: "2h 30m" }
+      ]
+    },
+    {
+      title: "Security and Compliance",
+      lessons: [
+        { id: "aws-a-4", title: "AWS WAF & Shield", duration: "2h" },
+        { id: "aws-a-5", title: "CloudTrail and GuardDuty", duration: "2h" },
+        { id: "aws-a-6", title: "IAM Advanced Policies and SCPs", duration: "1h 45m" }
+      ]
+    },
+    {
+      title: "Performance and Optimization",
+      lessons: [
+        { id: "aws-a-7", title: "CloudFront CDN Optimization", duration: "1h 30m" },
+        { id: "aws-a-8", title: "Route 53 Advanced Routing Policies", duration: "1h 45m" },
+        { id: "aws-a-9", title: "Global Accelerator and Failover Setup", duration: "2h" }
+      ]
+    },
+    {
+      title: "Final Project and Certification",
+      lessons: [
+        { id: "aws-a-10", title: "Enterprise Architecture Lab", duration: "3h" },
+        { id: "aws-a-11", title: "Cost Optimization Review", duration: "1h" },
+        { id: "aws-a-12", title: "Final Knowledge Assessment", duration: "1h 30m" }
+      ]
+    }
+  ],
+  totalLessons: 12,
+  resources: [
+    { title: "AWS Well-Architected Framework", link: "https://aws.amazon.com/architecture/well-architected/" },
+    { title: "AWS Security Hub Docs", link: "https://docs.aws.amazon.com/securityhub/" },
+    { title: "AWS Networking & Content Delivery", link: "https://aws.amazon.com/products/networking/" }
+  ]
+},
 
   // --- Azure ---
   {
@@ -371,9 +540,9 @@ export const courseData: Course[] = [
   { id: 83, title: "Kubernetes Security Best Practices", category: "Kubernetes", difficulty: "Advanced", duration: "30h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg", description: "Secure your K8s clusters", instructor: { name: "Krishna R", title: "Security Expert", avatar: "K", bio: "..." }, whatYouWillLearn: ["RBAC", "Pod security", "Network policies"], modules: [{ title: "Security Fundamentals", lessons: [{ id: "k8s-a-1", title: "RBAC", duration: "3h" }, { id: "k8s-a-2", title: "Pod Security Policies", duration: "2h 45m" }] }, { title: "Advanced Security", lessons: [{ id: "k8s-a-3", title: "Network Security", duration: "3h" }, { id: "k8s-a-4", title: "Secrets Management", duration: "2h 30m" }] }, { title: "Compliance", lessons: [{ id: "k8s-a-5", title: "Security Auditing", duration: "2h 45m" }] }], totalLessons: 5, resources: [] },
 
   // --- Prometheus & Grafana ---
-  { id: 91, title: "Prometheus & Grafana 101", category: "Prometheus & Grafana", difficulty: "Beginner", duration: "15h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Grafana_logo.svg", description: "Learn monitoring basics", instructor: { name: "John Doe", title: "Cloud Architect", avatar: "J", bio: "..." }, whatYouWillLearn: ["Prometheus fundamentals", "Grafana basics", "Metrics collection"], modules: [{ title: "Getting Started", lessons: [{ id: "prom-b-1", title: "Introduction to Monitoring", duration: "1h 30m" }, { id: "prom-b-2", title: "Installing Prometheus", duration: "1h" }] }, { title: "Grafana Basics", lessons: [{ id: "prom-b-3", title: "Grafana Setup", duration: "1h 30m" }, { id: "prom-b-4", title: "Creating Dashboards", duration: "2h" }] }], totalLessons: 4, resources: [] },
-  { id: 92, title: "Monitoring with Prometheus & Grafana", category: "Prometheus & Grafana", difficulty: "Intermediate", duration: "22h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Grafana_logo.svg", description: "Advanced monitoring workflows", instructor: { name: "John Doe", title: "Cloud Architect", avatar: "J", bio: "..." }, whatYouWillLearn: ["PromQL", "Exporters", "Advanced dashboards"], modules: [{ title: "Prometheus Deep Dive", lessons: [{ id: "prom-i-1", title: "PromQL Mastery", duration: "3h" }, { id: "prom-i-2", title: "Exporters", duration: "2h 30m" }] }, { title: "Grafana Advanced", lessons: [{ id: "prom-i-3", title: "Advanced Dashboards", duration: "2h 30m" }, { id: "prom-i-4", title: "Templating", duration: "2h" }] }], totalLessons: 4, resources: [] },
-  { id: 93, title: "Advanced Alerting and Dashboards", category: "Prometheus & Grafana", difficulty: "Advanced", duration: "25h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Grafana_logo.svg", description: "Enterprise monitoring solutions", instructor: { name: "John Doe", title: "Cloud Architect", avatar: "J", bio: "..." }, whatYouWillLearn: ["Alert management", "High availability", "Federation"], modules: [{ title: "Alerting", lessons: [{ id: "prom-a-1", title: "Alertmanager", duration: "3h" }, { id: "prom-a-2", title: "Alert Rules", duration: "2h 30m" }] }, { title: "Enterprise Setup", lessons: [{ id: "prom-a-3", title: "High Availability", duration: "3h" }, { id: "prom-a-4", title: "Federation", duration: "2h 45m" }] }], totalLessons: 4, resources: [] },
+  { id: 91, title: "Prometheus & Grafana 101", category: "Prometheus & Grafana", difficulty: "Beginner", duration: "15h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Grafana_logo.svg", description: "Learn monitoring basics", instructor: { name: "Rajesh Vardhan Busam", title: "Cloud Architect", avatar: "J", bio: "..." }, whatYouWillLearn: ["Prometheus fundamentals", "Grafana basics", "Metrics collection"], modules: [{ title: "Getting Started", lessons: [{ id: "prom-b-1", title: "Introduction to Monitoring", duration: "1h 30m" }, { id: "prom-b-2", title: "Installing Prometheus", duration: "1h" }] }, { title: "Grafana Basics", lessons: [{ id: "prom-b-3", title: "Grafana Setup", duration: "1h 30m" }, { id: "prom-b-4", title: "Creating Dashboards", duration: "2h" }] }], totalLessons: 4, resources: [] },
+  { id: 92, title: "Monitoring with Prometheus & Grafana", category: "Prometheus & Grafana", difficulty: "Intermediate", duration: "22h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Grafana_logo.svg", description: "Advanced monitoring workflows", instructor: { name: "Rajesh Vardhan Busam", title: "Cloud Architect", avatar: "J", bio: "..." }, whatYouWillLearn: ["PromQL", "Exporters", "Advanced dashboards"], modules: [{ title: "Prometheus Deep Dive", lessons: [{ id: "prom-i-1", title: "PromQL Mastery", duration: "3h" }, { id: "prom-i-2", title: "Exporters", duration: "2h 30m" }] }, { title: "Grafana Advanced", lessons: [{ id: "prom-i-3", title: "Advanced Dashboards", duration: "2h 30m" }, { id: "prom-i-4", title: "Templating", duration: "2h" }] }], totalLessons: 4, resources: [] },
+  { id: 93, title: "Advanced Alerting and Dashboards", category: "Prometheus & Grafana", difficulty: "Advanced", duration: "25h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Grafana_logo.svg", description: "Enterprise monitoring solutions", instructor: { name: "Rajesh Vardhan Busam", title: "Cloud Architect", avatar: "J", bio: "..." }, whatYouWillLearn: ["Alert management", "High availability", "Federation"], modules: [{ title: "Alerting", lessons: [{ id: "prom-a-1", title: "Alertmanager", duration: "3h" }, { id: "prom-a-2", title: "Alert Rules", duration: "2h 30m" }] }, { title: "Enterprise Setup", lessons: [{ id: "prom-a-3", title: "High Availability", duration: "3h" }, { id: "prom-a-4", title: "Federation", duration: "2h 45m" }] }], totalLessons: 4, resources: [] },
 
   // --- ELK Stack ---
   { id: 1001, title: "ELK Stack for Beginners", category: "ELK Stack", difficulty: "Beginner", duration: "18h", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Elastic_logo.svg", description: "Learn centralized logging", instructor: { name: "Jane Smith", title: "Azure Cloud Advocate", avatar: "JS", bio: "..." }, whatYouWillLearn: ["Elasticsearch basics", "Logstash", "Kibana"], modules: [{ title: "ELK Fundamentals", lessons: [{ id: "elk-b-1", title: "Introduction to ELK", duration: "1h 30m" }, { id: "elk-b-2", title: "Installing ELK Stack", duration: "2h" }] }, { title: "Core Components", lessons: [{ id: "elk-b-3", title: "Elasticsearch", duration: "2h 30m" }, { id: "elk-b-4", title: "Logstash Pipelines", duration: "2h" }, { id: "elk-b-5", title: "Kibana Dashboards", duration: "2h" }] }], totalLessons: 5, resources: [] },

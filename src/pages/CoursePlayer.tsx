@@ -16,7 +16,7 @@ import { courseData, Lesson } from "@/data/courseData";
 import { useParams, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { doc, getDoc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -50,26 +50,44 @@ const CoursePlayer = () => {
     }
   }, [user, course]);
 
-  const handleMarkComplete = async () => {
+  const toggleLessonCompletion = async () => {
     if (!user || !user.uid || !course) return;
 
     const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
-    if (!currentLessonData || completedLessons.includes(currentLessonData.id)) return;
+    if (!currentLessonData) return;
 
-    const newCompletedLessons = [...completedLessons, currentLessonData.id];
-    setCompletedLessons(newCompletedLessons);
-
+    const lessonId = currentLessonData.id;
+    const isCurrentlyCompleted = completedLessons.includes(lessonId);
     const enrollmentDocRef = doc(db, "enrollments", `${user.uid}_${course.id}`);
 
     try {
-      await updateDoc(enrollmentDocRef, { 
-        completedLessons: arrayUnion(currentLessonData.id)
-      });
-      toast.success("Lesson marked as complete!");
-    } catch (error) {
-        // Fallback to setDoc if the document doesn't exist yet, which can happen with optimistic UI.
-        await setDoc(enrollmentDocRef, { completedLessons: [currentLessonData.id], userId: user.uid, courseId: course.id }, { merge: true });
+      if (isCurrentlyCompleted) {
+        // Mark incomplete
+        const newCompletedLessons = completedLessons.filter(id => id !== lessonId);
+        setCompletedLessons(newCompletedLessons);
+        await updateDoc(enrollmentDocRef, { completedLessons: arrayRemove(lessonId) });
+        toast.info("Lesson marked as incomplete.");
+      } else {
+        // Mark complete
+        const newCompletedLessons = [...completedLessons, lessonId];
+        setCompletedLessons(newCompletedLessons);
+        // Use setDoc with merge:true to create if not exists, or update if exists
+        await setDoc(enrollmentDocRef, { 
+            completedLessons: arrayUnion(lessonId),
+            userId: user.uid,
+            courseId: course.id
+        }, { merge: true });
         toast.success("Lesson marked as complete!");
+      }
+    } catch (error) {
+      console.error("Error toggling lesson completion: ", error);
+      toast.error("Failed to update lesson status. Please try again.");
+      // Revert optimistic UI update on error
+      if (isCurrentlyCompleted) {
+        setCompletedLessons([...completedLessons, lessonId]);
+      } else {
+        setCompletedLessons(completedLessons.filter(id => id !== lessonId));
+      }
     }
   };
 
@@ -177,12 +195,11 @@ const CoursePlayer = () => {
               </p>
             </div>
             <Button 
-              className={`${isCompleted ? 'bg-success hover:bg-success/90' : 'bg-primary hover:bg-primary/90'} text-white w-full sm:w-auto flex-shrink-0`}
-              onClick={handleMarkComplete}
-              disabled={isCompleted}
+              className={`${isCompleted ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'bg-primary hover:bg-primary/90 text-white'} w-full sm:w-auto flex-shrink-0`}
+              onClick={toggleLessonCompletion}
             >
               <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              {isCompleted ? 'Completed' : 'Mark Complete'}
+              {isCompleted ? 'Mark Incomplete' : 'Mark Complete'}
             </Button>
           </div>
 
