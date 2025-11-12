@@ -76,7 +76,36 @@ const CoursePlayer = () => {
   if (!course) {
     return <Navigate to="/courses" />;
   }
-  
+
+  const totalModules = course.modules.length;
+  const totalLessonsInCurrentModule = course.modules[currentLesson.moduleIndex]?.lessons.length || 0;
+
+  const goToNextLesson = () => {
+    let { moduleIndex, lessonIndex } = currentLesson;
+
+    if (lessonIndex < totalLessonsInCurrentModule - 1) {
+      setCurrentLesson({ moduleIndex, lessonIndex: lessonIndex + 1 });
+    } else if (moduleIndex < totalModules - 1) {
+      setCurrentLesson({ moduleIndex: moduleIndex + 1, lessonIndex: 0 });
+    } else {
+      toast.info("You have completed all lessons in this course!");
+    }
+  };
+
+  const goToPreviousLesson = () => {
+    let { moduleIndex, lessonIndex } = currentLesson;
+
+    if (lessonIndex > 0) {
+      setCurrentLesson({ moduleIndex, lessonIndex: lessonIndex - 1 });
+    } else if (moduleIndex > 0) {
+      const previousModuleIndex = moduleIndex - 1;
+      const lastLessonIndexInPreviousModule = course.modules[previousModuleIndex].lessons.length - 1;
+      setCurrentLesson({ moduleIndex: previousModuleIndex, lessonIndex: lastLessonIndexInPreviousModule });
+    } else {
+      toast.info("You are at the first lesson.");
+    };
+  };
+
   const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
   const { title: lessonTitle, duration: lessonDuration, videoUrl } = currentLessonData;
   const isCompleted = completedLessons.includes(currentLessonData.id);
@@ -91,6 +120,11 @@ const CoursePlayer = () => {
     open: { width: 350, x: 0 },
     closed: { width: 0, x: 350 },
   };
+
+  const isFirstLesson = currentLesson.moduleIndex === 0 && currentLesson.lessonIndex === 0;
+  const isLastLesson = 
+    currentLesson.moduleIndex === totalModules - 1 &&
+    currentLesson.lessonIndex === totalLessonsInCurrentModule - 1;
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -176,11 +210,20 @@ const CoursePlayer = () => {
 
           {/* Navigation */}
           <div className="flex flex-col sm:flex-row gap-3 sm:justify-between mt-6 sm:mt-8 border-t pt-6">
-            <Button variant="outline" className="w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="w-full sm:w-auto"
+              onClick={goToPreviousLesson}
+              disabled={isFirstLesson}
+            >
               <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               Previous Lesson
             </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto">
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
+              onClick={goToNextLesson}
+              disabled={isLastLesson}
+            >
               Next Lesson
               <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
             </Button>
@@ -239,7 +282,7 @@ const CoursePlayer = () => {
                          >
                            <div className="flex items-center min-w-0 flex-1">
                             {isLessonCompleted ? (
-                              <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 text-success flex-shrink-0" />
+                              <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 fill-success text-success-foreground flex-shrink-0" />
                             ) : (
                               <PlayCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 text-muted-foreground flex-shrink-0" />
                             )}

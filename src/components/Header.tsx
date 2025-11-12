@@ -20,7 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
+import { NavLink } from "@/components/NavLink";
 
 const navLinks = [
   { to: "/dashboard", label: "Dashboard" },
@@ -63,19 +63,15 @@ const Header = () => {
         <div className="flex items-center gap-6">
           <nav className="hidden items-center gap-6 md:flex">
             {navLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.to}
                 to={link.to}
-                className={cn(
-                  "flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all duration-300 rounded-lg relative overflow-hidden group",
-                  location.pathname.startsWith(link.to)
-                    ? "text-accent-foreground before:absolute before:bottom-0 before:left-0 before:w-full before:h-0.5 before:bg-gradient-primary"
-                    : "text-accent-foreground/60 hover:text-accent-foreground hover:bg-accent-foreground/5"
-                )}
+                className="flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all duration-300 rounded-lg relative overflow-hidden group text-accent-foreground/60 hover:text-accent-foreground hover:bg-accent-foreground/5"
+                activeClassName="text-accent-foreground before:absolute before:bottom-0 before:left-0 before:w-full before:h-0.5 before:bg-gradient-primary"
               >
                 {link.icon && <link.icon className="h-4 w-4" />}
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
           </nav>
 
@@ -95,19 +91,15 @@ const Header = () => {
                 </SheetHeader>
                 <nav className="flex flex-col gap-4 mt-8">
                   {navLinks.map((link) => (
-                    <Link
+                    <NavLink
                       key={link.to}
                       to={link.to}
-                      className={cn(
-                        "flex items-center gap-2 py-2 px-3 text-lg font-medium transition-all duration-300 rounded-lg",
-                        location.pathname.startsWith(link.to)
-                          ? "text-accent-foreground bg-accent-foreground/10"
-                          : "text-accent-foreground/60 hover:text-accent-foreground hover:bg-accent-foreground/5"
-                      )}
+                      className="flex items-center gap-2 py-2 px-3 text-lg font-medium transition-all duration-300 rounded-lg text-accent-foreground/60 hover:text-accent-foreground hover:bg-accent-foreground/5"
+                      activeClassName="text-accent-foreground bg-accent-foreground/10"
                     >
                       {link.icon && <link.icon className="h-5 w-5" />}
                       {link.label}
-                    </Link>
+                    </NavLink>
                   ))}
                 </nav>
                 <div className="mt-8">

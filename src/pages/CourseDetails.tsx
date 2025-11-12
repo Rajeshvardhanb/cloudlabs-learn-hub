@@ -6,7 +6,7 @@ import { Clock, User, CheckCircle, PlayCircle, ChevronDown, ChevronUp, BookOpen,
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore"; // Import deleteDoc
 import { db } from "@/firebase";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -58,6 +58,25 @@ const CourseDetails = () => {
     }
   };
 
+  const handleUnenroll = async () => {
+    if (!user || !user.uid || !course) {
+      toast.error("You must be logged in to unenroll.");
+      return;
+    }
+
+    const previousEnrollment = isEnrolled;
+    setIsEnrolled(false); // Optimistic UI update
+
+    try {
+      await deleteDoc(doc(db, "enrollments", `${user.uid}_${course.id}`));
+      toast.success(`Successfully unenrolled from ${course.title}.`);
+    } catch (error) {
+      console.error("Error unenrolling: ", error);
+      toast.error("Unenrollment failed. Please try again.");
+      setIsEnrolled(previousEnrollment); // Revert UI on error
+    }
+  };
+
   if (!course) {
     return <AnimatedPage><div className="text-center py-20">Course not found</div></AnimatedPage>;
   }
@@ -82,11 +101,21 @@ const CourseDetails = () => {
                 <div className="flex items-center gap-2"><Clock className="h-5 w-5 text-primary" /><span>{course.duration}</span></div>
                 <div className="flex items-center gap-2"><User className="h-5 w-5 text-primary" /><span>{course.instructor.name}</span></div>
               </div>
-              <div className="mt-8">
+              <div className="mt-8 flex gap-4">
                 {isEnrolled ? (
-                    <Link to={`/course/${course.id}/player`}>
-                        <Button size="lg" className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6">Start Learning</Button>
-                    </Link>
+                    <>
+                        <Link to={`/course/${course.id}/player`}>
+                            <Button size="lg" className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6">Start Learning</Button>
+                        </Link>
+                        <Button 
+                          size="lg" 
+                          variant="outline"
+                          className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                          onClick={handleUnenroll}
+                        >
+                          Unenroll
+                        </Button>
+                    </>
                 ) : (
                     <Button size="lg" className="shadow-card hover:shadow-hover transition-all duration-300 text-lg px-8 py-6" onClick={handleEnroll}>Enroll Now</Button>
                 )}

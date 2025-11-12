@@ -93,7 +93,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {enrolledCourses.map((course) => (
               <Card key={course.id} className="flex flex-col overflow-hidden rounded-xl shadow-card hover:shadow-elevated transition-shadow duration-300">
-                <CardContent className="p-4 sm:p-6">
+                <CardContent className="flex flex-col flex-grow p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-bold mb-2 line-clamp-2">{course.title}</h3>
                   <p className="text-muted-foreground text-xs sm:text-sm mb-4">{course.category}</p>
                   <Progress value={course.progress} className="mb-4" />
@@ -101,7 +101,7 @@ const Dashboard = () => {
                     <span>Progress</span>
                     <span className="font-semibold text-primary">{course.progress}%</span>
                   </div>
-                  <Link to={`/course/${course.id}/player`} className="w-full">
+                  <Link to={`/course/${course.id}/player`} className="w-full mt-auto">
                     <Button className="w-full text-sm sm:text-base h-10 sm:h-11">Continue Learning</Button>
                   </Link>
                 </CardContent>
