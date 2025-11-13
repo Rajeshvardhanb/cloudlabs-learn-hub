@@ -10,8 +10,8 @@ export interface DocLesson {
 }
 
 export const linuxDocsContent: Record<string, DocLesson> = {
-  "Introduction to Linux": {
-    title: "Introduction to Linux",
+  "Introduction to Linux and Open Source": {
+    title: "Introduction to Linux and Open Source",
     content: `Linux is a powerful, open-source operating system kernel that forms the foundation of numerous distributions used worldwide. Created by Linus Torvalds in 1991, Linux has grown to become the backbone of modern computing infrastructure, powering everything from smartphones to supercomputers.
 
 **Why Learn Linux?**
@@ -33,8 +33,45 @@ Linux dominates the server and cloud computing landscape, with over 90% of publi
     ]
   },
   
-  "Installing Linux": {
-    title: "Installing Linux",
+  "Linux Distributions Overview (Ubuntu, RHEL, CentOS)": {
+    title: "Linux Distributions Overview",
+    content: `Linux comes in many "flavors" called distributions (distros). Each distribution packages the Linux kernel with different software, tools, and configurations to serve specific purposes.
+
+**Major Linux Distribution Families:**
+
+1. **Debian-based** (Ubuntu, Linux Mint, Pop!_OS)
+   - User-friendly and well-documented
+   - APT package manager
+   - Large community support
+   - Great for beginners and desktops
+
+2. **Red Hat-based** (RHEL, CentOS, Rocky Linux, Fedora)
+   - Enterprise-focused
+   - YUM/DNF package manager
+   - Widely used in corporate environments
+   - Excellent stability and support
+
+3. **Arch-based** (Arch Linux, Manjaro)
+   - Rolling release model
+   - Cutting-edge software
+   - Highly customizable
+   - For advanced users
+
+4. **SUSE-based** (openSUSE, SUSE Linux Enterprise)
+   - Strong in enterprise environments
+   - YaST configuration tool
+   - Popular in Europe`,
+    keyPoints: [
+      "Ubuntu is the most popular Linux distribution for beginners",
+      "RHEL/CentOS are standard in enterprise data centers",
+      "Fedora showcases the latest features before RHEL",
+      "Choose based on your use case: desktop vs server",
+      "All distributions share the same Linux kernel"
+    ]
+  },
+
+  "Installing Linux (VM & Cloud Setup)": {
+    title: "Installing Linux (VM & Cloud Setup)",
     content: `Installing Linux is straightforward and can be done in multiple ways depending on your needs. Whether you're setting up a development environment, a server, or just exploring Linux, there's an installation method for you.
 
 **Installation Options:**
@@ -77,8 +114,91 @@ sha256sum -c SHA256SUMS 2>&1 | grep ubuntu-22.04.iso`,
     ]
   },
 
-  "Essential Commands": {
-    title: "Essential Linux Commands",
+  "Navigating the Terminal and Basic Commands": {
+    title: "Navigating the Terminal and Basic Commands",
+    content: `The terminal (or shell) is your gateway to Linux power. While it may seem intimidating at first, the command line offers unmatched control and efficiency once you master the basics.
+
+**What is the Shell?**
+
+The shell is a command-line interpreter that accepts your commands and executes them. The most common shell is Bash (Bourne Again Shell), but others like Zsh and Fish are also popular.
+
+**Basic Terminal Navigation:**
+
+Understanding how to move around the filesystem is your first critical skill. The Linux filesystem is hierarchical, starting from the root directory (/).`,
+    codeExamples: [
+      {
+        title: "Getting Started - First Commands",
+        code: `# Display your current username
+whoami
+
+# Display current date and time
+date
+
+# Display system information
+uname -a
+
+# Show current shell
+echo $SHELL
+
+# Clear the screen
+clear
+
+# Display a message
+echo "Hello, Linux!"`,
+        language: "bash"
+      },
+      {
+        title: "Basic Navigation",
+        code: `# Print working directory (where am I?)
+pwd
+
+# List files in current directory
+ls
+
+# Change to home directory
+cd ~
+cd
+
+# Change to specific directory
+cd /var/log
+
+# Go up one directory level
+cd ..
+
+# Go back to previous directory
+cd -`,
+        language: "bash"
+      },
+      {
+        title: "Getting Help",
+        code: `# View manual page for a command
+man ls
+man cp
+
+# Quick help for a command
+ls --help
+cp --help
+
+# Search for commands
+apropos "copy files"
+
+# Show command type
+type ls
+which python`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "The terminal is case-sensitive (file.txt ≠ File.txt)",
+      "Use Tab key for auto-completion",
+      "Use Up/Down arrows to navigate command history",
+      "Ctrl+C cancels the current command",
+      "man pages are your best friend for learning commands"
+    ]
+  },
+
+  "Essential Commands (ls, cd, pwd, mkdir, rm, cp, mv)": {
+    title: "Essential Commands (ls, cd, pwd, mkdir, rm, cp, mv)",
     content: `Mastering the command line is crucial for effective Linux usage. These essential commands form the foundation of Linux system administration and daily operations.
 
 **Navigation and File Management:**
@@ -146,8 +266,8 @@ tail -f /var/log/syslog  # Follow log in real-time`,
     ]
   },
 
-  "File Operations": {
-    title: "Advanced File Operations",
+  "Working with Files and Directories": {
+    title: "Working with Files and Directories",
     content: `Linux provides powerful tools for file manipulation, searching, and processing. These operations are essential for automation, scripting, and system administration.
 
 **File Searching and Finding:**
@@ -228,8 +348,89 @@ du -h --max-depth=1 /var/`,
     ]
   },
 
-  "Directory Structure": {
-    title: "Linux Directory Structure (FHS)",
+  "Viewing and Editing Files (cat, less, head, tail, vi, nano)": {
+    title: "Viewing and Editing Files",
+    content: `Linux provides numerous tools for viewing and editing files. Understanding these tools is essential for system administration, troubleshooting, and development.
+
+**File Viewing Tools:**
+
+Different tools serve different purposes. Use cat for small files, less for large files, and head/tail for checking beginnings or ends.`,
+    codeExamples: [
+      {
+        title: "Viewing Files",
+        code: `# Display entire file
+cat filename.txt
+cat file1.txt file2.txt  # Multiple files
+
+# View with line numbers
+cat -n filename.txt
+
+# View large files with pagination
+less filename.txt
+# In less: Space=next page, b=previous page, q=quit, /=search
+
+# View first lines
+head filename.txt        # First 10 lines
+head -n 20 filename.txt  # First 20 lines
+
+# View last lines
+tail filename.txt        # Last 10 lines
+tail -n 50 filename.txt  # Last 50 lines
+
+# Follow file in real-time (great for logs!)
+tail -f /var/log/syslog`,
+        language: "bash"
+      },
+      {
+        title: "Editing with Nano (Beginner-Friendly)",
+        code: `# Open file in nano
+nano filename.txt
+
+# Nano keyboard shortcuts:
+# Ctrl+O - Save file
+# Ctrl+X - Exit
+# Ctrl+W - Search
+# Ctrl+K - Cut line
+# Ctrl+U - Paste
+# Ctrl+G - Help`,
+        language: "bash"
+      },
+      {
+        title: "Editing with Vi/Vim (Advanced)",
+        code: `# Open file in vi
+vi filename.txt
+vim filename.txt
+
+# Vi has different modes:
+# - Normal mode (default)
+# - Insert mode (press 'i' to enter)
+# - Command mode (press ':' to enter)
+
+# Basic Vi commands:
+i      # Enter insert mode
+Esc    # Return to normal mode
+:w     # Save file
+:q     # Quit
+:wq    # Save and quit
+:q!    # Quit without saving
+dd     # Delete line
+yy     # Copy line
+p      # Paste
+/text  # Search for 'text'`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Use 'less' for viewing large files",
+      "tail -f is essential for monitoring logs",
+      "nano is easier for beginners, vi/vim is more powerful",
+      "Always know how to exit vi: Esc, then :q!",
+      "cat is great for small files and combining files"
+    ]
+  },
+
+  "Understanding Linux Directory Structure": {
+    title: "Understanding Linux Directory Structure",
     content: `Linux follows the Filesystem Hierarchy Standard (FHS), which defines the directory structure and contents. Understanding this structure is crucial for system administration and troubleshooting.
 
 **Root Level Directories:**`,
@@ -281,8 +482,8 @@ ls /usr/bin | wc -l  # Count installed binaries`,
     ]
   },
 
-  "File Permissions": {
-    title: "Understanding File Permissions",
+  "File Ownership and Permissions (chmod, chown, chgrp)": {
+    title: "File Ownership and Permissions",
     content: `Linux uses a robust permission system to control file and directory access. Understanding permissions is crucial for security and proper system administration.
 
 **Permission Types:**
@@ -377,8 +578,8 @@ chmod 1777 /shared/temp`,
     ]
   },
 
-  "Managing Users": {
-    title: "User and Group Management",
+  "Creating and Managing Users": {
+    title: "Creating and Managing Users",
     content: `Linux is a multi-user system with robust user and group management capabilities. Proper user management is essential for security and system organization.
 
 **User Types:**
@@ -464,8 +665,8 @@ sudo -l`,
     ]
   },
 
-  "Package Managers": {
-    title: "Package Management",
+  "Package Managers Overview (apt, yum, dnf, zypper)": {
+    title: "Package Managers Overview",
     content: `Package managers are essential tools for installing, updating, and managing software on Linux systems. Different distributions use different package managers.
 
 **Main Package Managers:**
