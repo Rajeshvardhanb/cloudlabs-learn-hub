@@ -61,7 +61,7 @@ export const courseData: Course[] = [
   id: 1401,
   title: "Linux for Beginners to Advanced",
   category: "Linux",
-  difficulty: "Beginner to Advanced",
+  difficulty: "Beginner",
   duration: "35 hours",
   imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg",
   description:
@@ -836,7 +836,7 @@ export const courseData: Course[] = [
   id: 41,
   title: "Git for Absolute Beginners to Advanced",
   category: "Git",
-  difficulty: "Beginner to Advanced",
+  difficulty: "Beginner",
   duration: "20 hours",
   imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg",
   description:
@@ -1216,7 +1216,7 @@ export const courseData: Course[] = [
   id: 61,
   title: "Ansible Automation – From Zero to Hero",
   category: "Ansible",
-  difficulty: "Beginner to Advanced",
+  difficulty: "Beginner",
   duration: "35 hours",
   imageUrl: "https://upload.wikimedia.org/wikipedia/commons/2/24/Ansible_logo.svg",
   description:
@@ -1324,7 +1324,7 @@ export const courseData: Course[] = [
   id: 71,
   title: "Docker & Container Orchestration – From Zero to Expert",
   category: "Docker",
-  difficulty: "Beginner to Advanced",
+  difficulty: "Beginner",
   duration: "40 hours",
   imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_logo.svg",
   description:
