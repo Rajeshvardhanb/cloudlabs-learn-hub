@@ -13,10 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { courseData, Lesson } from "@/data/courseData";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link } from "react-router-dom"; // Import Link
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { doc, getDoc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -50,33 +50,80 @@ const CoursePlayer = () => {
     }
   }, [user, course]);
 
-  const handleMarkComplete = async () => {
+  const toggleLessonCompletion = async () => {
     if (!user || !user.uid || !course) return;
 
     const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
-    if (!currentLessonData || completedLessons.includes(currentLessonData.id)) return;
+    if (!currentLessonData) return;
 
-    const newCompletedLessons = [...completedLessons, currentLessonData.id];
-    setCompletedLessons(newCompletedLessons);
-
+    const lessonId = currentLessonData.id;
+    const isCurrentlyCompleted = completedLessons.includes(lessonId);
     const enrollmentDocRef = doc(db, "enrollments", `${user.uid}_${course.id}`);
 
     try {
-      await updateDoc(enrollmentDocRef, { 
-        completedLessons: arrayUnion(currentLessonData.id)
-      });
-      toast.success("Lesson marked as complete!");
-    } catch (error) {
-        // Fallback to setDoc if the document doesn't exist yet, which can happen with optimistic UI.
-        await setDoc(enrollmentDocRef, { completedLessons: [currentLessonData.id], userId: user.uid, courseId: course.id }, { merge: true });
+      if (isCurrentlyCompleted) {
+        // Mark incomplete
+        const newCompletedLessons = completedLessons.filter(id => id !== lessonId);
+        setCompletedLessons(newCompletedLessons);
+        await updateDoc(enrollmentDocRef, { completedLessons: arrayRemove(lessonId) });
+        toast.info("Lesson marked as incomplete.");
+      } else {
+        // Mark complete
+        const newCompletedLessons = [...completedLessons, lessonId];
+        setCompletedLessons(newCompletedLessons);
+        // Use setDoc with merge:true to create if not exists, or update if exists
+        await setDoc(enrollmentDocRef, { 
+            completedLessons: arrayUnion(lessonId),
+            userId: user.uid,
+            courseId: course.id
+        }, { merge: true });
         toast.success("Lesson marked as complete!");
+      }
+    } catch (error) {
+      console.error("Error toggling lesson completion: ", error);
+      toast.error("Failed to update lesson status. Please try again.");
+      // Revert optimistic UI update on error
+      if (isCurrentlyCompleted) {
+        setCompletedLessons([...completedLessons, lessonId]);
+      } else {
+        setCompletedLessons(completedLessons.filter(id => id !== lessonId));
+      }
     }
   };
 
   if (!course) {
     return <Navigate to="/courses" />;
   }
-  
+
+  const totalModules = course.modules.length;
+  const totalLessonsInCurrentModule = course.modules[currentLesson.moduleIndex]?.lessons.length || 0;
+
+  const goToNextLesson = () => {
+    let { moduleIndex, lessonIndex } = currentLesson;
+
+    if (lessonIndex < totalLessonsInCurrentModule - 1) {
+      setCurrentLesson({ moduleIndex, lessonIndex: lessonIndex + 1 });
+    } else if (moduleIndex < totalModules - 1) {
+      setCurrentLesson({ moduleIndex: moduleIndex + 1, lessonIndex: 0 });
+    } else {
+      toast.info("You have completed all lessons in this course!");
+    }
+  };
+
+  const goToPreviousLesson = () => {
+    let { moduleIndex, lessonIndex } = currentLesson;
+
+    if (lessonIndex > 0) {
+      setCurrentLesson({ moduleIndex, lessonIndex: lessonIndex - 1 });
+    } else if (moduleIndex > 0) {
+      const previousModuleIndex = moduleIndex - 1;
+      const lastLessonIndexInPreviousModule = course.modules[previousModuleIndex].lessons.length - 1;
+      setCurrentLesson({ moduleIndex: previousModuleIndex, lessonIndex: lastLessonIndexInPreviousModule });
+    } else {
+      toast.info("You are at the first lesson.");
+    };
+  };
+
   const currentLessonData = course.modules[currentLesson.moduleIndex]?.lessons[currentLesson.lessonIndex];
   const { title: lessonTitle, duration: lessonDuration, videoUrl } = currentLessonData;
   const isCompleted = completedLessons.includes(currentLessonData.id);
@@ -91,6 +138,11 @@ const CoursePlayer = () => {
     open: { width: 350, x: 0 },
     closed: { width: 0, x: 350 },
   };
+
+  const isFirstLesson = currentLesson.moduleIndex === 0 && currentLesson.lessonIndex === 0;
+  const isLastLesson = 
+    currentLesson.moduleIndex === totalModules - 1 &&
+    currentLesson.lessonIndex === totalLessonsInCurrentModule - 1;
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -110,6 +162,15 @@ const CoursePlayer = () => {
         </div>
 
         <div className="flex-1 flex flex-col p-4 sm:p-6 md:p-8 overflow-y-auto">
+          {/* Breadcrumb */}
+          <nav className="mb-4 text-sm text-muted-foreground flex items-center">
+            <Link to="/courses" className="hover:text-primary transition-colors">Courses</Link>
+            <ChevronRight className="h-4 w-4 mx-2" />
+            <Link to={`/courses?category=${course.category}`} className="hover:text-primary transition-colors">{course.category}</Link>
+            <ChevronRight className="h-4 w-4 mx-2" />
+            <span className="text-foreground">{course.title}</span>
+          </nav>
+
           {/* Video Player */}
           <div 
             className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden"
@@ -143,12 +204,11 @@ const CoursePlayer = () => {
               </p>
             </div>
             <Button 
-              className={`${isCompleted ? 'bg-success hover:bg-success/90' : 'bg-primary hover:bg-primary/90'} text-white w-full sm:w-auto flex-shrink-0`}
-              onClick={handleMarkComplete}
-              disabled={isCompleted}
+              className={`${isCompleted ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'bg-primary hover:bg-primary/90 text-white'} w-full sm:w-auto flex-shrink-0`}
+              onClick={toggleLessonCompletion}
             >
               <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              {isCompleted ? 'Completed' : 'Mark Complete'}
+              {isCompleted ? 'Mark Incomplete' : 'Mark Complete'}
             </Button>
           </div>
 
@@ -176,11 +236,20 @@ const CoursePlayer = () => {
 
           {/* Navigation */}
           <div className="flex flex-col sm:flex-row gap-3 sm:justify-between mt-6 sm:mt-8 border-t pt-6">
-            <Button variant="outline" className="w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="w-full sm:w-auto"
+              onClick={goToPreviousLesson}
+              disabled={isFirstLesson}
+            >
               <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               Previous Lesson
             </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto">
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
+              onClick={goToNextLesson}
+              disabled={isLastLesson}
+            >
               Next Lesson
               <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
             </Button>
@@ -239,7 +308,7 @@ const CoursePlayer = () => {
                          >
                            <div className="flex items-center min-w-0 flex-1">
                             {isLessonCompleted ? (
-                              <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 text-success flex-shrink-0" />
+                              <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 fill-success text-success-foreground flex-shrink-0" />
                             ) : (
                               <PlayCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 text-muted-foreground flex-shrink-0" />
                             )}

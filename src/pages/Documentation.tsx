@@ -61,6 +61,19 @@ const documents = [
     type: "github",
     category: "Ansible",
   },
+  // New documentation content below
+  {
+    title: "New AWS Documentation",
+    description: "This is a new documentation entry for AWS services.",
+    type: "pdf",
+    category: "AWS",
+  },
+  {
+    title: "Advanced Git Techniques",
+    description: "Explore advanced Git commands and workflows for complex projects.",
+    type: "github",
+    category: "Git",
+  },
 ];
 
 const Documentation = () => {
