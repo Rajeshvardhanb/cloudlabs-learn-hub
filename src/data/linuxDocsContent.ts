@@ -757,5 +757,1362 @@ flatpak uninstall org.mozilla.firefox`,
       "Check official repositories before third-party sources",
       "Keep your system updated regularly for security"
     ]
+  },
+
+  "Input, Output, and Redirection": {
+    title: "Input, Output, and Redirection",
+    content: `Linux uses data streams for input and output. Understanding redirection is crucial for efficient command-line work and automation.
+
+**Standard Streams:**
+- **stdin (0)**: Standard input (keyboard by default)
+- **stdout (1)**: Standard output (screen by default)
+- **stderr (2)**: Standard error (screen by default)
+
+**Redirection Operators:**
+- \`>\` : Redirect stdout (overwrite)
+- \`>>\` : Redirect stdout (append)
+- \`<\` : Redirect stdin
+- \`2>\` : Redirect stderr
+- \`&>\` : Redirect both stdout and stderr`,
+    codeExamples: [
+      {
+        title: "Output Redirection",
+        code: `# Redirect output to file (overwrite)
+ls -la > files.txt
+echo "Hello" > greeting.txt
+
+# Redirect output to file (append)
+echo "World" >> greeting.txt
+date >> log.txt
+
+# Redirect stderr to file
+command-that-fails 2> errors.txt
+
+# Redirect both stdout and stderr
+command &> output.txt
+command > output.txt 2>&1
+
+# Discard output (send to /dev/null)
+command > /dev/null 2>&1`,
+        language: "bash"
+      },
+      {
+        title: "Input Redirection",
+        code: `# Read from file instead of keyboard
+wc -l < file.txt
+sort < unsorted.txt > sorted.txt
+
+# Here document (multi-line input)
+cat << EOF > config.txt
+Setting1=value1
+Setting2=value2
+Setting3=value3
+EOF
+
+# Here string
+grep "error" <<< "this is an error message"`,
+        language: "bash"
+      },
+      {
+        title: "Advanced Redirection",
+        code: `# Pipe output to another command
+ls -l | grep ".txt"
+ps aux | grep nginx | awk '{print $2}'
+
+# Tee command (output to file AND screen)
+ls -la | tee filelist.txt
+command | tee output.txt | grep "error"
+
+# Command substitution
+echo "Today is $(date)"
+FILES=$(ls *.txt)
+
+# Process substitution
+diff <(ls dir1) <(ls dir2)`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Use > to redirect output (overwrites file)",
+      "Use >> to redirect output (appends to file)",
+      "Use 2> to redirect error messages",
+      "Combine streams with &> or > file 2>&1",
+      "Use tee to both save and display output"
+    ]
+  },
+
+  "Pipes and Filters (grep, sort, wc, cut, uniq)": {
+    title: "Pipes and Filters",
+    content: `Pipes allow you to chain commands together, passing the output of one command as input to another. This is one of Linux's most powerful features for text processing.
+
+**Common Filter Commands:**
+- **grep**: Search for patterns
+- **sort**: Sort lines
+- **uniq**: Remove duplicates
+- **cut**: Extract columns
+- **wc**: Count words, lines, characters
+- **awk**: Pattern scanning and processing
+- **sed**: Stream editor`,
+    codeExamples: [
+      {
+        title: "grep - Search and Filter",
+        code: `# Basic search
+grep "error" /var/log/syslog
+ps aux | grep nginx
+
+# Case-insensitive search
+grep -i "warning" log.txt
+
+# Show line numbers
+grep -n "function" script.sh
+
+# Recursive search
+grep -r "TODO" /home/user/projects/
+
+# Invert match (show non-matching lines)
+grep -v "success" log.txt
+
+# Count matching lines
+grep -c "error" log.txt
+
+# Regular expressions
+grep -E "error|warning|critical" log.txt
+grep "^[0-9]" file.txt  # Lines starting with number`,
+        language: "bash"
+      },
+      {
+        title: "sort, uniq, wc, cut",
+        code: `# Sort lines
+sort file.txt
+sort -r file.txt  # Reverse sort
+sort -n numbers.txt  # Numeric sort
+sort -k 2 data.txt  # Sort by 2nd column
+
+# Remove duplicates (requires sorted input)
+sort file.txt | uniq
+sort file.txt | uniq -c  # Count occurrences
+sort file.txt | uniq -d  # Show only duplicates
+
+# Word, line, character count
+wc file.txt
+wc -l file.txt  # Count lines only
+wc -w file.txt  # Count words only
+
+# Extract columns
+cut -d: -f1 /etc/passwd  # Extract 1st field
+cut -d, -f1,3 data.csv  # Extract 1st and 3rd field
+cut -c1-10 file.txt  # Extract characters 1-10`,
+        language: "bash"
+      },
+      {
+        title: "Powerful Command Chains",
+        code: `# Find most common commands in history
+history | awk '{print $2}' | sort | uniq -c | sort -rn | head -10
+
+# Count files by extension
+find . -type f | sed 's/.*\\.//' | sort | uniq -c | sort -rn
+
+# Find largest files
+du -ah /home | sort -rh | head -20
+
+# Extract specific fields from process list
+ps aux | awk '{print $1, $11}' | sort | uniq
+
+# Count unique IPs in access log
+cat access.log | awk '{print $1}' | sort | uniq -c | sort -rn
+
+# Find failed login attempts
+grep "Failed password" /var/log/auth.log | awk '{print $11}' | sort | uniq -c | sort -rn`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Pipes (|) chain commands together efficiently",
+      "grep is essential for searching text and logs",
+      "sort and uniq work together to analyze data",
+      "awk and sed are powerful for text processing",
+      "Combine multiple filters for complex operations"
+    ]
+  },
+
+  "Hidden Files and Special Permissions (SUID, SGID, Sticky Bit)": {
+    title: "Hidden Files and Special Permissions",
+    content: `Linux has special file permissions beyond the standard read, write, and execute. These include SUID, SGID, and sticky bit, which provide additional security and functionality controls.
+
+**Hidden Files:**
+Files starting with a dot (.) are hidden by default.
+
+**Special Permissions:**
+- **SUID (Set User ID)**: Run as file owner
+- **SGID (Set Group ID)**: Run as group owner or inherit directory group
+- **Sticky Bit**: Only owner can delete files in directory`,
+    codeExamples: [
+      {
+        title: "Working with Hidden Files",
+        code: `# List all files including hidden
+ls -la
+
+# List only hidden files
+ls -ld .*
+
+# Create hidden file
+touch .hidden_file
+echo "secret" > .secret_config
+
+# Common hidden files
+~/.bashrc        # Bash configuration
+~/.bash_profile  # Bash login configuration
+~/.ssh/          # SSH keys and config
+~/.gitconfig     # Git configuration
+
+# Show file size of hidden files
+du -sh .[^.]*`,
+        language: "bash"
+      },
+      {
+        title: "SUID (Set User ID) - 4000",
+        code: `# Check for SUID files
+find / -perm -4000 -type f 2>/dev/null
+
+# Example SUID programs
+ls -l /usr/bin/passwd  # rws: SUID bit set
+ls -l /usr/bin/sudo
+
+# Set SUID
+chmod u+s /path/to/program
+chmod 4755 program
+
+# Remove SUID
+chmod u-s program
+chmod 0755 program
+
+# Security Note: SUID allows users to execute
+# the program with the file owner's privileges
+# Example: passwd runs as root to modify /etc/shadow`,
+        language: "bash"
+      },
+      {
+        title: "SGID (Set Group ID) - 2000",
+        code: `# Set SGID on file
+chmod g+s /path/to/program
+chmod 2755 program
+
+# Set SGID on directory (new files inherit group)
+chmod g+s /shared/projects
+chmod 2775 /shared/projects
+
+# Verify SGID
+ls -ld /shared/projects  # drwxrwsr-x
+
+# Use case: Shared project directories
+sudo mkdir /shared/team
+sudo chgrp developers /shared/team
+sudo chmod 2775 /shared/team
+# Now all files created in this directory
+# automatically belong to 'developers' group`,
+        language: "bash"
+      },
+      {
+        title: "Sticky Bit - 1000",
+        code: `# Set sticky bit (common on /tmp)
+chmod +t /shared/temp
+chmod 1777 /shared/temp
+
+# Check sticky bit
+ls -ld /tmp  # drwxrwxrwt (t at the end)
+
+# Remove sticky bit
+chmod -t /shared/temp
+
+# Use case: Shared directories where only
+# the file owner can delete their files
+# Perfect for temporary directories
+
+# Example: Create shared directory
+sudo mkdir /shared/dropbox
+sudo chmod 1777 /shared/dropbox
+# Now anyone can create files, but only
+# the owner of each file can delete it`,
+        language: "bash"
+      },
+      {
+        title: "Finding Special Permission Files",
+        code: `# Find all SUID files
+find / -perm -4000 -type f -ls 2>/dev/null
+
+# Find all SGID files
+find / -perm -2000 -type f -ls 2>/dev/null
+
+# Find sticky bit directories
+find / -perm -1000 -type d -ls 2>/dev/null
+
+# Find files with any special permissions
+find / -perm /7000 -type f -ls 2>/dev/null
+
+# Security audit: Check for unusual SUID files
+find / -perm -4000 -user root -type f 2>/dev/null`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Hidden files start with a dot (.)",
+      "SUID can be a security risk if misconfigured",
+      "SGID on directories helps with shared project directories",
+      "Sticky bit prevents users from deleting others' files",
+      "Regularly audit special permissions for security"
+    ]
+  },
+
+  "Mounting and Unmounting File Systems": {
+    title: "Mounting and Unmounting File Systems",
+    content: `In Linux, all storage devices must be mounted to a directory (mount point) before they can be accessed. Understanding mounting is essential for managing disks, USB drives, and network shares.
+
+**Key Concepts:**
+- **Mount point**: Directory where filesystem is attached
+- **/etc/fstab**: Configuration file for automatic mounting
+- **Device naming**: /dev/sda1, /dev/nvme0n1p1, etc.`,
+    codeExamples: [
+      {
+        title: "Basic Mount Operations",
+        code: `# List all mounted filesystems
+mount
+df -h  # Show disk space and mount points
+findmnt  # Tree view of mount points
+
+# Mount a device
+sudo mount /dev/sdb1 /mnt/usb
+
+# Mount with specific filesystem type
+sudo mount -t ext4 /dev/sdb1 /mnt/disk
+sudo mount -t ntfs /dev/sdb1 /mnt/windows
+
+# Mount read-only
+sudo mount -o ro /dev/sdb1 /mnt/disk
+
+# Unmount a filesystem
+sudo umount /mnt/usb
+sudo umount /dev/sdb1
+
+# Force unmount (use carefully!)
+sudo umount -f /mnt/stuck
+sudo umount -l /mnt/busy  # Lazy unmount`,
+        language: "bash"
+      },
+      {
+        title: "USB and External Drives",
+        code: `# List block devices
+lsblk
+lsblk -f  # Show filesystem types
+
+# Identify the new device (often /dev/sdb or /dev/sdc)
+sudo fdisk -l
+
+# Create mount point
+sudo mkdir -p /mnt/usb
+
+# Mount USB drive
+sudo mount /dev/sdb1 /mnt/usb
+
+# Mount with specific permissions
+sudo mount -o uid=1000,gid=1000 /dev/sdb1 /mnt/usb
+
+# Check mounted filesystem
+df -h /mnt/usb
+
+# Safely unmount before removing
+sudo umount /mnt/usb
+
+# Check if device is in use
+lsof /mnt/usb
+fuser -m /mnt/usb`,
+        language: "bash"
+      },
+      {
+        title: "/etc/fstab - Automatic Mounting",
+        code: `# View current fstab
+cat /etc/fstab
+
+# fstab format:
+# <device>  <mount point>  <type>  <options>  <dump>  <pass>
+
+# Example fstab entries:
+UUID=xxx-xxx  /              ext4    defaults    0  1
+UUID=yyy-yyy  /home          ext4    defaults    0  2
+/dev/sdb1     /mnt/backup    ext4    defaults    0  2
+//server/share /mnt/smb      cifs    credentials=/root/.smbcreds  0  0
+
+# Get UUID of device
+sudo blkid /dev/sdb1
+
+# Add entry to fstab (edit carefully!)
+sudo nano /etc/fstab
+
+# Example: Mount external drive at boot
+UUID=xxxx-xxxx  /mnt/storage  ext4  defaults,nofail  0  2
+
+# Test fstab without rebooting
+sudo mount -a
+
+# Options explained:
+# defaults: rw, suid, dev, exec, auto, nouser, async
+# nofail: Boot continues if device not present
+# noatime: Don't update access time (performance)`,
+        language: "bash"
+      },
+      {
+        title: "Network Shares (NFS & CIFS/SMB)",
+        code: `# Mount NFS share
+sudo mount -t nfs server:/share /mnt/nfs
+sudo mount 192.168.1.100:/exports/data /mnt/data
+
+# Mount Windows/SMB share
+sudo mount -t cifs //server/share /mnt/smb -o username=user,password=pass
+
+# Better: Use credentials file for SMB
+echo "username=user" | sudo tee /root/.smbcreds
+echo "password=pass" | sudo tee -a /root/.smbcreds
+sudo chmod 600 /root/.smbcreds
+sudo mount -t cifs //server/share /mnt/smb -o credentials=/root/.smbcreds
+
+# Auto-mount NFS in fstab
+server:/share  /mnt/nfs  nfs  defaults,_netdev  0  0
+
+# Auto-mount CIFS in fstab
+//server/share  /mnt/smb  cifs  credentials=/root/.smbcreds,_netdev  0  0`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Always unmount before removing external drives",
+      "Use /etc/fstab for automatic mounting at boot",
+      "nofail option prevents boot failures",
+      "Check if files are in use before unmounting",
+      "Use UUIDs in fstab for consistent device naming"
+    ]
+  },
+
+  "User Groups and Permissions": {
+    title: "User Groups and Permissions",
+    content: `Groups provide a way to organize users and manage permissions efficiently. Understanding group management is essential for multi-user systems and shared resources.
+
+**Key Concepts:**
+- Users can belong to multiple groups
+- Primary group: User's default group
+- Secondary groups: Additional groups
+- /etc/group: Stores group information`,
+    codeExamples: [
+      {
+        title: "Group Management Commands",
+        code: `# Create new group
+sudo groupadd developers
+sudo groupadd -g 1500 devops  # Specify GID
+
+# View all groups
+cat /etc/group
+
+# View user's groups
+groups username
+id username
+
+# Add user to group
+sudo usermod -aG developers john
+sudo gpasswd -a john developers  # Alternative
+
+# Remove user from group
+sudo gpasswd -d john developers
+
+# Change user's primary group
+sudo usermod -g developers john
+
+# Delete group
+sudo groupdel oldgroup
+
+# Modify group name
+sudo groupmod -n newname oldname`,
+        language: "bash"
+      },
+      {
+        title: "Working with Group Permissions",
+        code: `# Create shared directory for team
+sudo mkdir /shared/projects
+sudo chgrp developers /shared/projects
+sudo chmod 2775 /shared/projects  # SGID + group write
+
+# All new files will inherit the group
+cd /shared/projects
+touch newfile.txt
+ls -l newfile.txt  # Shows 'developers' group
+
+# Set default permissions with umask
+umask 002  # New files: 664, dirs: 775
+
+# Change file group ownership
+sudo chgrp developers project.tar.gz
+sudo chown :developers file.txt  # Alternative syntax
+
+# Recursive group change
+sudo chgrp -R developers /var/www/html/`,
+        language: "bash"
+      },
+      {
+        title: "Access Control Lists (ACL)",
+        code: `# View ACL permissions
+getfacl filename
+
+# Give specific user read/write access
+setfacl -m u:john:rw file.txt
+
+# Give specific group read access
+setfacl -m g:developers:r file.txt
+
+# Set default ACL for directory
+setfacl -d -m g:developers:rwx /shared/projects/
+
+# Remove ACL entry
+setfacl -x u:john file.txt
+
+# Remove all ACL entries
+setfacl -b file.txt
+
+# Copy ACL from one file to another
+getfacl file1.txt | setfacl --set-file=- file2.txt`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Use groups to manage permissions for multiple users",
+      "SGID on directories ensures new files inherit group",
+      "ACLs provide fine-grained permission control",
+      "Users must log out/in for group changes to take effect",
+      "Primary group is used for new files by default"
+    ]
+  },
+
+  "Switching Users and Sudo Privileges": {
+    title: "Switching Users and Sudo Privileges",
+    content: `Linux allows users to switch between accounts and execute commands with elevated privileges. Understanding su and sudo is critical for system administration and security.
+
+**Key Tools:**
+- **su**: Switch user account
+- **sudo**: Execute command as another user (typically root)
+- **/etc/sudoers**: Configuration file for sudo`,
+    codeExamples: [
+      {
+        title: "Switching Users (su)",
+        code: `# Switch to root
+su -
+su - root
+
+# Switch to another user
+su - username
+
+# Execute command as another user
+su - username -c "whoami"
+
+# Switch without loading environment
+su username  # Not recommended
+
+# Return to previous user
+exit
+
+# Check current user
+whoami
+id`,
+        language: "bash"
+      },
+      {
+        title: "Using Sudo",
+        code: `# Execute command as root
+sudo apt update
+sudo systemctl restart nginx
+
+# Execute command as specific user
+sudo -u postgres psql
+sudo -u www-data ls -la /var/www
+
+# Switch to root shell
+sudo -i
+sudo -s
+
+# Run previous command with sudo
+sudo !!
+
+# Edit file with sudo
+sudo nano /etc/hosts
+sudo vim /etc/ssh/sshd_config
+
+# Check sudo privileges
+sudo -l
+
+# Sudo with environment preserved
+sudo -E command`,
+        language: "bash"
+      },
+      {
+        title: "Configuring Sudo (/etc/sudoers)",
+        code: `# NEVER edit sudoers directly!
+# Always use visudo for safety
+sudo visudo
+
+# Basic sudoers syntax:
+# user  host=(run_as) command
+
+# Allow user to run all commands
+john ALL=(ALL:ALL) ALL
+
+# Allow user without password
+jane ALL=(ALL) NOPASSWD: ALL
+
+# Allow specific commands only
+bob ALL=(ALL) NOPASSWD: /usr/bin/systemctl, /usr/bin/apt
+
+# Allow group to use sudo
+%sudo ALL=(ALL:ALL) ALL
+%developers ALL=(ALL) /usr/bin/docker
+
+# Command aliases
+Cmnd_Alias WEBSERVERS = /usr/bin/systemctl restart nginx, /usr/bin/systemctl restart apache2
+john ALL=(ALL) NOPASSWD: WEBSERVERS
+
+# Disable root password prompt timeout
+Defaults timestamp_timeout=0  # Always ask
+Defaults timestamp_timeout=60  # 60 minutes
+
+# Require password for every command
+Defaults timestamp_type=global`,
+        language: "bash"
+      },
+      {
+        title: "Sudo Best Practices",
+        code: `# View sudo log
+sudo cat /var/log/auth.log | grep sudo
+
+# Clear sudo cached credentials
+sudo -k
+
+# Validate sudoers file
+sudo visudo -c
+
+# Add user to sudo group (Ubuntu/Debian)
+sudo usermod -aG sudo username
+
+# Add user to wheel group (RHEL/CentOS)
+sudo usermod -aG wheel username
+
+# Test sudo access
+sudo -v  # Refresh sudo timeout
+
+# Run command in background with sudo
+sudo -b command &`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Never login as root; use sudo instead",
+      "Always use visudo to edit /etc/sudoers",
+      "Limit sudo access to necessary commands only",
+      "Regular users should not have NOPASSWD for all commands",
+      "Monitor sudo usage through logs"
+    ]
+  },
+
+  "Password Policies and Security": {
+    title: "Password Policies and Security",
+    content: `Strong password policies are essential for system security. Linux provides various tools to enforce password complexity, expiration, and account security.
+
+**Security Components:**
+- **PAM (Pluggable Authentication Modules)**: Authentication framework
+- **Password aging**: Enforce password expiration
+- **Password complexity**: Minimum requirements
+- **Account locking**: Prevent brute force attacks`,
+    codeExamples: [
+      {
+        title: "Password Management",
+        code: `# Change your own password
+passwd
+
+# Change another user's password (as root)
+sudo passwd username
+
+# Force user to change password on next login
+sudo passwd -e username
+sudo chage -d 0 username
+
+# Lock user account
+sudo passwd -l username
+sudo usermod -L username
+
+# Unlock user account
+sudo passwd -u username
+sudo usermod -U username
+
+# Check password status
+sudo passwd -S username
+
+# Delete user password (dangerous!)
+sudo passwd -d username`,
+        language: "bash"
+      },
+      {
+        title: "Password Aging Policies",
+        code: `# View password aging info
+sudo chage -l username
+
+# Set password expiration (90 days)
+sudo chage -M 90 username
+
+# Set minimum days between password changes
+sudo chage -m 7 username
+
+# Set warning before expiration (14 days)
+sudo chage -W 14 username
+
+# Set account expiration date
+sudo chage -E 2024-12-31 username
+
+# Never expire password
+sudo chage -M 99999 username
+
+# Interactive password aging setup
+sudo chage username
+
+# Default aging for new users
+sudo vim /etc/login.defs
+# PASS_MAX_DAYS   90
+# PASS_MIN_DAYS   7
+# PASS_WARN_AGE   14`,
+        language: "bash"
+      },
+      {
+        title: "Password Complexity (PAM)",
+        code: `# Configure password complexity (Ubuntu/Debian)
+sudo apt install libpam-pwquality
+sudo vim /etc/security/pwquality.conf
+
+# Example password requirements:
+minlen = 12           # Minimum length
+dcredit = -1          # At least 1 digit
+ucredit = -1          # At least 1 uppercase
+lcredit = -1          # At least 1 lowercase
+ocredit = -1          # At least 1 special char
+maxrepeat = 3         # Max repeated characters
+difok = 3             # Min different chars from old password
+reject_username       # Reject passwords containing username
+
+# RHEL/CentOS configuration
+sudo vim /etc/security/pwquality.conf
+sudo authconfig --passminlen=12 --update
+
+# Test password complexity
+pwscore
+# Enter test password to see score`,
+        language: "bash"
+      },
+      {
+        title: "Account Security",
+        code: `# Configure failed login attempts
+sudo vim /etc/pam.d/common-auth  # Ubuntu
+sudo vim /etc/pam.d/system-auth  # RHEL
+
+# Add line:
+auth required pam_tally2.so deny=5 unlock_time=1800
+
+# Check failed login attempts
+sudo pam_tally2 --user=username
+
+# Reset failed login counter
+sudo pam_tally2 --user=username --reset
+
+# View failed login attempts
+sudo cat /var/log/auth.log | grep "Failed password"
+sudo lastb  # Show bad login attempts
+
+# Set session timeout
+echo "TMOUT=600" >> ~/.bashrc  # 10 minutes
+
+# Disable unused accounts
+sudo usermod -L -e 1 olduser`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Enforce minimum password length of 12+ characters",
+      "Require password complexity (uppercase, numbers, symbols)",
+      "Implement password expiration (60-90 days)",
+      "Lock accounts after failed login attempts",
+      "Monitor authentication logs regularly"
+    ]
+  },
+
+  "Understanding Processes and Daemons": {
+    title: "Understanding Processes and Daemons",
+    content: `A process is a running instance of a program. Understanding process management is crucial for system monitoring, troubleshooting, and resource optimization.
+
+**Process Types:**
+- **Foreground**: Interactive processes
+- **Background**: Non-interactive processes
+- **Daemon**: Background services (systemd, nginx, sshd)
+- **Zombie**: Terminated but not cleaned up
+- **Orphan**: Parent process terminated`,
+    codeExamples: [
+      {
+        title: "Process Basics",
+        code: `# View your processes
+ps
+ps -u username
+
+# View all processes
+ps aux
+ps -ef
+
+# Process hierarchy (tree view)
+pstree
+ps auxf
+
+# View specific process
+ps -p 1234
+ps aux | grep nginx
+
+# Process information
+# PID: Process ID
+# PPID: Parent Process ID
+# %CPU: CPU usage
+# %MEM: Memory usage
+# VSZ: Virtual memory size
+# RSS: Physical memory size
+# TTY: Terminal
+# STAT: Process state
+# TIME: CPU time
+# COMMAND: Command name`,
+        language: "bash"
+      },
+      {
+        title: "Process States",
+        code: `# Common process states (STAT column)
+# R - Running or runnable
+# S - Sleeping (waiting for event)
+# D - Uninterruptible sleep (I/O)
+# Z - Zombie (terminated, waiting for parent)
+# T - Stopped (Ctrl+Z or SIGSTOP)
+# < - High priority
+# N - Low priority
+# + - Foreground process group
+# s - Session leader
+
+# View running processes only
+ps aux | grep " R "
+
+# View zombie processes
+ps aux | grep " Z "
+ps aux | awk '$8=="Z"'
+
+# View process by state
+ps -eo pid,ppid,stat,cmd | grep "^S"`,
+        language: "bash"
+      },
+      {
+        title: "Understanding Daemons",
+        code: `# List all running services (systemd)
+systemctl list-units --type=service --state=running
+
+# View daemon status
+systemctl status nginx
+systemctl status sshd
+
+# Traditional daemon naming
+# Usually end with 'd': httpd, sshd, crond, systemd
+
+# Check if process is a daemon
+ps aux | grep -E "systemd|nginx|ssh|cron"
+
+# Daemons typically:
+# - Run in background
+# - No controlling terminal (? in TTY column)
+# - PPID often 1 (systemd)
+# - Started at boot time
+
+# View daemon process tree
+pstree -p | grep systemd`,
+        language: "bash"
+      },
+      {
+        title: "Process Information Files (/proc)",
+        code: `# Process information in /proc filesystem
+ls /proc/1234/  # Replace 1234 with actual PID
+
+# View process command line
+cat /proc/1234/cmdline
+
+# View process environment
+cat /proc/1234/environ
+
+# View process status
+cat /proc/1234/status
+
+# View process memory maps
+cat /proc/1234/maps
+
+# View open files
+ls -l /proc/1234/fd/
+
+# View current working directory
+ls -l /proc/1234/cwd
+
+# Overall system info
+cat /proc/cpuinfo
+cat /proc/meminfo
+cat /proc/version`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Every process has a unique PID",
+      "Daemons are background services that run continuously",
+      "Zombie processes indicate improper child process cleanup",
+      "Process state 'D' indicates I/O wait (usually temporary)",
+      "/proc filesystem provides detailed process information"
+    ]
+  },
+
+  "Foreground, Background, and Kill Commands": {
+    title: "Foreground, Background, and Kill Commands",
+    content: `Linux allows you to control process execution - running them in foreground or background, suspending them, and terminating them when needed.
+
+**Job Control:**
+- **Foreground**: Process runs interactively in terminal
+- **Background**: Process runs without terminal interaction
+- **Signals**: Communication mechanism for processes`,
+    codeExamples: [
+      {
+        title: "Background and Foreground",
+        code: `# Run command in background (append &)
+sleep 100 &
+firefox &
+./long-running-script.sh &
+
+# View background jobs
+jobs
+jobs -l  # With PID
+
+# Bring job to foreground
+fg
+fg %1  # Bring job 1 to foreground
+fg %firefox  # By command name
+
+# Send current process to background
+# Press Ctrl+Z (suspends)
+# Then type:
+bg  # Resume in background
+bg %1  # Resume job 1 in background
+
+# Start process in background using nohup
+# (continues after logout)
+nohup ./script.sh &
+nohup python app.py > output.log 2>&1 &
+
+# Disown job (detach from shell)
+./script.sh &
+disown
+disown %1`,
+        language: "bash"
+      },
+      {
+        title: "Kill Commands and Signals",
+        code: `# Terminate process by PID
+kill 1234
+kill -15 1234  # SIGTERM (graceful)
+kill -9 1234   # SIGKILL (force)
+
+# Terminate by name
+killall firefox
+killall -9 chrome
+
+# Terminate using pattern
+pkill firefox
+pkill -9 -u username  # Kill all processes of user
+
+# Common signals:
+kill -l  # List all signals
+
+# Most used signals:
+kill -1 PID   # SIGHUP  - Reload configuration
+kill -2 PID   # SIGINT  - Interrupt (Ctrl+C)
+kill -9 PID   # SIGKILL - Force kill (cannot be caught)
+kill -15 PID  # SIGTERM - Terminate gracefully (default)
+kill -18 PID  # SIGCONT - Continue if stopped
+kill -19 PID  # SIGSTOP - Stop (cannot be caught)
+
+# Terminate parent and all children
+pkill -P 1234  # Kill children of PID 1234`,
+        language: "bash"
+      },
+      {
+        title: "Advanced Process Control",
+        code: `# Find and kill process by name
+ps aux | grep firefox | awk '{print $2}' | xargs kill
+
+# Kill all processes of a user
+sudo pkill -u username
+sudo killall -u username
+
+# Kill process using port
+# Find process using port 8080
+sudo lsof -ti:8080 | xargs kill -9
+sudo fuser -k 8080/tcp
+
+# Interactive process termination
+top
+# Press 'k' then enter PID
+
+# Kill process and all children
+kill -TERM -$$  # Kill current shell session
+
+# Trap signals in scripts
+trap "echo 'Script interrupted'; exit" SIGINT SIGTERM
+
+# Ignore hangup signal
+nohup command &
+# or
+command &
+disown`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Ctrl+Z suspends process, bg resumes in background",
+      "Always try SIGTERM (15) before SIGKILL (9)",
+      "SIGKILL cannot be caught or ignored by process",
+      "Use nohup for processes that should survive logout",
+      "killall and pkill can kill multiple processes at once"
+    ]
+  },
+
+  "Monitoring with ps, top, htop, vmstat": {
+    title: "Monitoring with ps, top, htop, vmstat",
+    content: `System monitoring tools help you understand resource usage, identify bottlenecks, and troubleshoot performance issues. These tools are essential for maintaining healthy Linux systems.
+
+**Key Monitoring Tools:**
+- **ps**: Snapshot of processes
+- **top**: Real-time process monitoring
+- **htop**: Enhanced top with better UI
+- **vmstat**: Virtual memory statistics
+- **iostat**: I/O statistics`,
+    codeExamples: [
+      {
+        title: "ps - Process Snapshot",
+        code: `# Basic ps commands
+ps aux  # All processes, BSD style
+ps -ef  # All processes, Unix style
+
+# Most useful ps options
+ps aux --sort=-%cpu | head  # Top CPU consumers
+ps aux --sort=-%mem | head  # Top memory consumers
+
+# Custom format
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu | head
+
+# Find specific process
+ps aux | grep nginx
+pgrep -a nginx
+
+# Process tree
+ps auxf
+ps -ef --forest
+
+# Threads
+ps -eLf  # Show threads
+ps -T -p 1234  # Threads for specific PID`,
+        language: "bash"
+      },
+      {
+        title: "top - Real-time Monitoring",
+        code: `# Start top
+top
+
+# Top keyboard shortcuts:
+h       # Help
+q       # Quit
+k       # Kill process (enter PID)
+r       # Renice process
+P       # Sort by CPU usage
+M       # Sort by memory usage
+T       # Sort by running time
+c       # Show full command path
+u       # Filter by user
+1       # Show individual CPUs
+f       # Field management
+
+# Top with options
+top -d 5  # Update every 5 seconds
+top -n 3  # Run 3 iterations then exit
+top -u username  # Show user's processes only
+top -b -n 1 > top-output.txt  # Batch mode
+
+# Understanding top display:
+# load average: 1-min, 5-min, 15-min averages
+# us: user CPU time
+# sy: system CPU time
+# ni: nice CPU time
+# id: idle time
+# wa: I/O wait time
+# hi: hardware interrupts
+# si: software interrupts`,
+        language: "bash"
+      },
+      {
+        title: "htop - Enhanced Monitoring",
+        code: `# Install htop
+sudo apt install htop  # Debian/Ubuntu
+sudo dnf install htop  # RHEL/Fedora
+
+# Run htop
+htop
+
+# htop features:
+# - Color-coded display
+# - Mouse support
+# - Horizontal/vertical scrolling
+# - Tree view (F5)
+# - Process filtering (F4)
+# - Sorting options (F6)
+# - Process search (F3)
+
+# htop keyboard shortcuts:
+F1  # Help
+F2  # Setup
+F3  # Search process
+F4  # Filter processes
+F5  # Tree view
+F6  # Sort by column
+F9  # Kill process
+F10 # Quit
+Space # Tag process
+U   # Show only user's processes
+K   # Hide kernel threads
+H   # Hide/show threads`,
+        language: "bash"
+      },
+      {
+        title: "vmstat, iostat, and More",
+        code: `# vmstat - Virtual memory statistics
+vmstat 1  # Update every 1 second
+vmstat 2 10  # Every 2 sec, 10 times
+
+# vmstat columns:
+# r: runnable processes
+# b: blocked processes
+# swpd: virtual memory used
+# free: idle memory
+# si: swap in
+# so: swap out
+# bi: blocks received from disk
+# bo: blocks sent to disk
+
+# iostat - I/O statistics
+sudo apt install sysstat  # Install first
+iostat 2  # Update every 2 seconds
+iostat -x  # Extended statistics
+
+# free - Memory usage
+free -h  # Human readable
+free -m  # In megabytes
+free -s 2  # Update every 2 seconds
+
+# uptime - System uptime and load
+uptime
+w  # Who is logged in + load
+
+# mpstat - CPU statistics
+mpstat 1  # Per-processor statistics
+mpstat -P ALL 1  # All CPUs
+
+# sar - System activity report
+sar -u 1 10  # CPU usage, 1 sec, 10 times
+sar -r 1 10  # Memory usage
+sar -n DEV 1 10  # Network statistics`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "top shows real-time view, ps shows snapshot",
+      "htop provides better UX than top",
+      "Load average > CPU count indicates system strain",
+      "High 'wa' in top indicates I/O bottleneck",
+      "vmstat is excellent for analyzing memory pressure"
+    ]
+  },
+
+  "Scheduling with cron and at Jobs": {
+    title: "Scheduling with cron and at Jobs",
+    content: `Task scheduling allows you to automate repetitive tasks. Linux provides cron for recurring tasks and at for one-time scheduled tasks.
+
+**Scheduling Tools:**
+- **cron**: Recurring scheduled tasks
+- **at**: One-time scheduled tasks
+- **anacron**: Runs missed jobs (for systems not always on)
+- **systemd timers**: Modern alternative to cron`,
+    codeExamples: [
+      {
+        title: "Cron Basics",
+        code: `# Edit your crontab
+crontab -e
+
+# View your crontab
+crontab -l
+
+# Remove your crontab
+crontab -r
+
+# Edit another user's crontab (as root)
+sudo crontab -e -u username
+
+# System-wide crontab
+sudo vim /etc/crontab
+
+# Crontab syntax:
+# * * * * * command
+# │ │ │ │ │
+# │ │ │ │ └─── Day of week (0-7, 0 and 7 = Sunday)
+# │ │ │ └───── Month (1-12)
+# │ │ └─────── Day of month (1-31)
+# │ └───────── Hour (0-23)
+# └─────────── Minute (0-59)
+
+# Special strings:
+@reboot    # Run at startup
+@yearly    # Run once a year (0 0 1 1 *)
+@annually  # Same as @yearly
+@monthly   # Run once a month (0 0 1 * *)
+@weekly    # Run once a week (0 0 * * 0)
+@daily     # Run once a day (0 0 * * *)
+@hourly    # Run once an hour (0 * * * *)`,
+        language: "bash"
+      },
+      {
+        title: "Cron Examples",
+        code: `# Every minute
+* * * * * /path/to/script.sh
+
+# Every hour at minute 0
+0 * * * * /path/to/script.sh
+
+# Every day at 2:30 AM
+30 2 * * * /path/to/backup.sh
+
+# Every Monday at 9 AM
+0 9 * * 1 /path/to/weekly-report.sh
+
+# First day of every month at midnight
+0 0 1 * * /path/to/monthly-cleanup.sh
+
+# Every 15 minutes
+*/15 * * * * /path/to/monitor.sh
+
+# Every 6 hours
+0 */6 * * * /path/to/sync.sh
+
+# Monday to Friday at 6 PM
+0 18 * * 1-5 /path/to/weekday-task.sh
+
+# Multiple times: 8 AM, 12 PM, 6 PM
+0 8,12,18 * * * /path/to/task.sh
+
+# Working hours (9-5), every hour
+0 9-17 * * * /path/to/task.sh
+
+# Redirect output
+0 2 * * * /path/to/backup.sh >> /var/log/backup.log 2>&1
+
+# With environment variables
+0 3 * * * export PATH=/usr/bin; /path/to/script.sh`,
+        language: "bash"
+      },
+      {
+        title: "At Commands - One-time Tasks",
+        code: `# Install at
+sudo apt install at  # Debian/Ubuntu
+sudo dnf install at  # RHEL/Fedora
+sudo systemctl enable --now atd
+
+# Schedule task at specific time
+echo "/path/to/script.sh" | at 14:30
+echo "reboot" | sudo at 02:00
+
+# Schedule with different time formats
+at 2:30 PM
+at now + 1 hour
+at now + 30 minutes
+at midnight
+at noon
+at tomorrow
+at next week
+at 10:00 PM tomorrow
+at 09:00 AM Jul 31
+
+# Interactive at
+at 15:30
+> /path/to/script.sh
+> /another/command
+> <Press Ctrl+D to save>
+
+# View pending jobs
+atq
+at -l
+
+# View specific job details
+at -c 1  # Replace 1 with job number
+
+# Remove scheduled job
+atrm 1  # Replace 1 with job number
+at -r 1  # Alternative`,
+        language: "bash"
+      },
+      {
+        title: "Systemd Timers",
+        code: `# List all timers
+systemctl list-timers --all
+
+# Create timer unit
+sudo vim /etc/systemd/system/backup.timer
+
+[Unit]
+Description=Daily Backup Timer
+
+[Timer]
+OnCalendar=daily
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
+# Create corresponding service
+sudo vim /etc/systemd/system/backup.service
+
+[Unit]
+Description=Backup Service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/backup.sh
+
+# Enable and start timer
+sudo systemctl daemon-reload
+sudo systemctl enable backup.timer
+sudo systemctl start backup.timer
+
+# Check timer status
+systemctl status backup.timer
+systemctl list-timers backup.timer`,
+        language: "bash"
+      }
+    ],
+    keyPoints: [
+      "Cron is for recurring tasks, at is for one-time tasks",
+      "Always use absolute paths in cron jobs",
+      "Redirect output to logs for troubleshooting",
+      "Test scripts manually before scheduling",
+      "Systemd timers are more flexible than cron"
+    ]
   }
 };
