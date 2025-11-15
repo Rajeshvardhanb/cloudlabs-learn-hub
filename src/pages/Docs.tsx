@@ -210,7 +210,7 @@ const Docs = () => {
                       <Sparkles className="h-6 w-6 text-primary" />
                     </motion.div>
                     <h1 className="text-3xl md:text-4xl font-heading font-bold bg-gradient-to-r from-foreground via-primary to-foreground/70 bg-clip-text text-transparent">
-                      {linuxDocsContent[selectedTopic]?.title || selectedTopic}
+                      {allDocsContent[selectedTopic]?.title || selectedTopic}
                     </h1>
                   </motion.div>
                   <motion.div
@@ -226,11 +226,11 @@ const Docs = () => {
                 </motion.div>
 
                 {/* Content */}
-                {linuxDocsContent[selectedTopic] ? (
+                {allDocsContent[selectedTopic] ? (
                   <motion.div variants={containerVariants} className="space-y-8">
                     {/* Main Description with staggered paragraph animations */}
                     <motion.div variants={itemVariants} className="prose prose-lg dark:prose-invert max-w-none">
-                      {linuxDocsContent[selectedTopic].content.split('\n\n').map((paragraph, idx) => (
+                      {allDocsContent[selectedTopic].content.map((paragraph, idx) => (
                         <motion.p
                           key={idx}
                           initial={{ opacity: 0, y: 20 }}
@@ -249,7 +249,7 @@ const Docs = () => {
                     </motion.div>
 
                     {/* Key Points with enhanced animations */}
-                    {linuxDocsContent[selectedTopic].keyPoints && (
+                    {allDocsContent[selectedTopic].keyTakeaways && (
                       <motion.div
                         variants={itemVariants}
                         whileHover={{ scale: 1.01 }}
@@ -278,7 +278,7 @@ const Docs = () => {
                           </h3>
                         </motion.div>
                         <ul className="space-y-3">
-                          {linuxDocsContent[selectedTopic].keyPoints!.map((point, idx) => (
+                          {allDocsContent[selectedTopic].keyTakeaways!.map((point, idx) => (
                             <motion.li
                               key={idx}
                               custom={idx}
@@ -308,7 +308,7 @@ const Docs = () => {
                     )}
 
                     {/* Code Examples with enhanced animations */}
-                    {linuxDocsContent[selectedTopic].codeExamples && (
+                    {allDocsContent[selectedTopic].codeExamples && (
                       <motion.div variants={itemVariants} className="space-y-6">
                         <motion.div
                           initial={{ opacity: 0, x: -20 }}
@@ -331,7 +331,7 @@ const Docs = () => {
                             Code Examples
                           </h3>
                         </motion.div>
-                        {linuxDocsContent[selectedTopic].codeExamples!.map((example, idx) => (
+                        {allDocsContent[selectedTopic].codeExamples!.map((example, idx) => (
                           <motion.div
                             key={idx}
                             variants={codeBlockVariants}
@@ -350,12 +350,14 @@ const Docs = () => {
                               <h4 className="font-medium text-foreground/90 group-hover:text-foreground transition-colors">
                                 {example.title}
                               </h4>
-                              <Badge
-                                variant="secondary"
-                                className="text-xs group-hover:bg-primary/10 group-hover:text-primary transition-colors"
-                              >
-                                {example.language}
-                              </Badge>
+                              {example.language && (
+                                <Badge
+                                  variant="secondary"
+                                  className="text-xs group-hover:bg-primary/10 group-hover:text-primary transition-colors"
+                                >
+                                  {example.language}
+                                </Badge>
+                              )}
                             </motion.div>
                             <motion.div
                               whileHover={{ boxShadow: "0 10px 30px -10px rgba(var(--primary-rgb, 0, 0, 0), 0.3)" }}

@@ -1,7 +1,7 @@
 export interface DocContent {
   title: string;
   content: string[];
-  codeExamples?: { title: string; code: string }[];
+  codeExamples?: { title: string; code: string; language?: string }[];
   keyTakeaways?: string[];
 }
 
