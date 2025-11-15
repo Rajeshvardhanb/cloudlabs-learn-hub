@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { courseData } from "@/data/courseData";
-import { linuxDocsContent } from "@/data/linuxDocsContent";
+import { allDocsContent } from "@/data/allDocsContent";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, Code, CheckCircle2, Sparkles } from "lucide-react";
@@ -93,7 +93,7 @@ const Docs = () => {
   }, {} as Record<string, typeof courseData>);
 
   // State to hold the currently selected topic
-  const [selectedTopic, setSelectedTopic] = useState<string | null>("Introduction to Linux");
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
   return (
     <AnimatedPage>
